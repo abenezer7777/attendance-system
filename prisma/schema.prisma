@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String       @id @default(cuid())
+  name              String
+  email             String       @unique
+  password          String
+  role              Role         @default(EMPLOYEE)
+  department        String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  attendances       Attendance[]
+  assignedLocations Location[]
+}
+
+model Location {
+  id          String       @id @default(cuid())
+  name        String
+  latitude    Float
+  longitude   Float
+  radius      Float // in meters
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  users       User[]
+  attendances Attendance[]
+}
+
+model Attendance {
+  id         String    @id @default(cuid())
+  userId     String
+  locationId String
+  checkIn    DateTime
+  checkOut   DateTime?
+  status     Status    @default(PRESENT)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+  location   Location  @relation(fields: [locationId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum Status {
+  PRESENT
+  LATE
+  ABSENT
+}
