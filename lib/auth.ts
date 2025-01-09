@@ -24,12 +24,12 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-        const [username] = credentials.email.split("@");
-        console.log("🚀 ~ authorize ~ username:", username);
+        // const [username] = credentials.email.split("@");
+        // console.log("🚀 ~ authorize ~ username:", username);
 
-        const domain = "ethio.local";
-        const dn = `${username}@${domain}`;
-        await ldapClient.bind(dn, credentials.password);
+        // const domain = "ethio.local";
+        // const dn = `${username}@${domain}`;
+        // await ldapClient.bind(dn, credentials.password);
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
