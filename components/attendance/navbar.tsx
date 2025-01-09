@@ -38,7 +38,11 @@ export function Navbar() {
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/et-logo-text.png"
+              src={
+                theme === "dark"
+                  ? "/et-logo-text-dark.png"
+                  : "/et-logo-text.png"
+              }
               alt="Logo"
               width={150}
               height={150}
