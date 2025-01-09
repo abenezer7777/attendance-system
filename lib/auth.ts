@@ -2,8 +2,17 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
+import LdapClient from "ldapjs-client";
+
+const ldapClient = new LdapClient({ url: "ldap://172.22.186.7" });
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 10 * 60, // 10 minutes in seconds
+    updateAge: 2 * 60, // Update session every 5 minutes
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -15,6 +24,12 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
+        const [username] = credentials.email.split("@");
+        console.log("🚀 ~ authorize ~ username:", username);
+
+        const domain = "ethio.local";
+        const dn = `${username}@${domain}`;
+        await ldapClient.bind(dn, credentials.password);
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
