@@ -6,6 +6,9 @@ import {
   getAttendanceRecords,
   hasOpenCheckIn,
 } from "@/lib/api/attendance";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -57,7 +60,6 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -65,13 +67,60 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
+    const filter = searchParams.get("filter") || "all";
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
-    const result = await getAttendanceRecords(
-      session.user.id as string,
-      page,
-      limit
-    );
-    return NextResponse.json(result);
+    const whereClause: any = {
+      userId: session.user.id as string,
+      checkIn: {
+        gte: startDate ? new Date(startDate) : undefined,
+        lte: endDate ? new Date(endDate) : undefined,
+      },
+    };
+
+    // Add status filters
+    if (filter !== "all") {
+      switch (filter) {
+        case "early":
+          whereClause.status = "EARLY_LEAVE";
+          break;
+        case "late":
+          whereClause.status = "LATE";
+          break;
+        case "absent":
+          whereClause.status = "ABSENT";
+          break;
+        case "present":
+          whereClause.status = "PRESENT";
+          break;
+        case "autocheckout":
+          whereClause.status = "AUTOCHECKOUT";
+          break;
+      }
+    }
+
+    const [records, total] = await Promise.all([
+      prisma.attendance.findMany({
+        where: whereClause,
+        include: { location: true },
+        orderBy: { checkIn: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.attendance.count({
+        where: whereClause,
+      }),
+    ]);
+
+    return NextResponse.json({
+      data: records,
+      pagination: {
+        total,
+        pages: Math.ceil(total / limit),
+        current: page,
+      },
+    });
   } catch (error) {
     console.error("Fetch attendance error:", error);
     return NextResponse.json(

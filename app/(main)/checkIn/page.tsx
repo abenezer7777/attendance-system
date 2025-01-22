@@ -21,7 +21,8 @@ import { AttendanceList } from "@/components/attendance/attendance-list";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import SignOut from "@/components/auth/sign-out";
-import { Navbar } from "@/components/attendance/navbar";
+import { Navbar } from "@/components/navbar";
+import { AttendanceTable } from "@/components/attendance/attendance-table";
 
 export default async function AttendancePage() {
   const session = await getServerSession(authOptions);
@@ -42,7 +43,7 @@ export default async function AttendancePage() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <main className="container mx-auto py-6 px-4 space-y-8">
         <div className="flex justify-between">
           <div className="mb-8">
@@ -63,6 +64,7 @@ export default async function AttendancePage() {
         <section>
           <h2 className="text-2xl font-semibold mb-4">Recent Records</h2>
           <AttendanceList />
+          <AttendanceTable />
         </section>
       </main>
     </>

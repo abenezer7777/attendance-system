@@ -11,7 +11,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get locationId from query params
     const { searchParams } = new URL(req.url);
     const locationId = searchParams.get("locationId");
 
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
     const todayRecords = await prisma.attendance.findMany({
       where: {
         userId: session.user.id as string,
-        locationId: locationId,
+        // locationId: locationId,
         checkIn: {
           gte: today,
         },
@@ -45,24 +44,33 @@ export async function GET(req: Request) {
     const activeAttendance = todayRecords.find((record) => !record.checkOut);
     const firstRecord = todayRecords[0]?.checkIn;
 
-    // Get the most recent action for this location
-    const lastAction = todayRecords.reduce((latest, record) => {
-      const checkOut = record.checkOut ? new Date(record.checkOut) : null;
-      const checkIn = new Date(record.checkIn);
+    // Get the last check-out time
+    const lastCheckOut = todayRecords
+      .filter((record) => record.checkOut)
+      .reduce((latest, record) => {
+        if (!latest || (record.checkOut && record.checkOut > latest)) {
+          return record.checkOut;
+        }
+        return latest;
+      }, null as Date | null);
 
-      if (!latest) return checkOut || checkIn;
-
-      if (checkOut && checkOut > latest) return checkOut;
-      if (checkIn > latest) return checkIn;
-
-      return latest;
-    }, null as Date | null);
+    // Calculate total hours
+    let totalHours = "00:00";
+    if (firstRecord && lastCheckOut) {
+      const diffInMs = lastCheckOut.getTime() - firstRecord.getTime();
+      const hours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60));
+      totalHours = `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}`;
+    }
 
     return NextResponse.json({
       hasActiveCheckIn: !!activeAttendance,
       activeLocation: activeAttendance?.location || null,
       firstRecord: firstRecord ? firstRecord.toISOString() : null,
-      lastRecord: lastAction ? lastAction.toISOString() : null,
+      lastRecord: lastCheckOut ? lastCheckOut.toISOString() : null,
+      totalHours,
     });
   } catch (error) {
     console.error("Status check error:", error);

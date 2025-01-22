@@ -5,14 +5,14 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Create initial users
-  await prisma.user.create({
-    data: {
-      name: "Admin User",
-      email: "admin@example.com",
-      password: "Admin@1234", // Store hashed passwords in production
-      role: "ADMIN",
-    },
-  });
+  // await prisma.user.create({
+  //   data: {
+  //     name: "Admin User",
+  //     email: "admin@example.com",
+  //     password: "Admin@1234", // Store hashed passwords in production
+  //     // role: "ADMIN",
+  //   },
+  // });
 
   // Create initial locations
   await prisma.location.create({

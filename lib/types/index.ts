@@ -10,7 +10,7 @@ export interface AttendanceRecord {
   id: string;
   checkIn: Date;
   checkOut?: Date;
-  status: 'PRESENT' | 'LATE' | 'ABSENT';
+  status: "PRESENT" | "LATE" | "ABSENT" | "AUTOCHECKOUT";
   location: Location;
 }
 
@@ -18,5 +18,5 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'ADMIN' | 'MANAGER' | 'EMPLOYEE';
+  role: string;
 }

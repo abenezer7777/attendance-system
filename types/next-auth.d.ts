@@ -1,4 +1,13 @@
 import "next-auth";
+export type Ability = {
+  subject: string;
+  action: string;
+};
+
+export type Role = {
+  name: string;
+  abilities: Ability[];
+};
 
 declare module "next-auth" {
   interface Session {
@@ -7,13 +16,23 @@ declare module "next-auth" {
       email: string;
       name: string;
       role: string;
-    }
+    };
   }
 
   interface User {
     id: string;
     email: string;
     name: string;
-    role: string;
+    role: {
+      abilities: {
+        action: string[];
+        id: string;
+        roleId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        subject: string;
+      }[];
+    };
   }
 }

@@ -34,7 +34,7 @@ export function Navbar() {
 
   return (
     <nav className="border-b">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center space-x-2">
             <Image
@@ -44,8 +44,8 @@ export function Navbar() {
                   : "/et-logo-text.png"
               }
               alt="Logo"
-              width={150}
-              height={150}
+              width={120}
+              height={120}
               priority
             />
           </Link>

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST() {
   try {
-    const oneHourAgo = new Date(Date.now() - 1 * 60 * 1000); // 1 hour ago
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
 
     // Find all open check-ins older than 1 hour
     const openCheckIns = await prisma.attendance.findMany({
@@ -21,7 +21,7 @@ export async function POST() {
         where: { id: record.id },
         data: {
           checkOut: new Date(),
-          status: "LATE", // Add this to your schema if needed
+          status: "AUTOCHECKOUT", // Add this to your schema if needed
         },
       })
     );

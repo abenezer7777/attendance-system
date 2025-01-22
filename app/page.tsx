@@ -9,7 +9,9 @@ export default async function Home() {
 
   if (session?.user) {
     redirect("/attendance");
+  } else {
+    redirect("/login");
   }
 
-  return <LoginPage />;
+  // return <LoginPage />;
 }

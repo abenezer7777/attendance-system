@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AttendanceRecord } from "@/lib/types";
+import { Card } from "../ui/card";
 
 async function fetchAttendance(page: number = 1) {
   const response = await fetch(`/api/attendance?page=${page}`);
@@ -28,29 +29,33 @@ export function AttendanceList() {
   if (error) return <div>Error loading attendance records</div>;
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Location</TableHead>
-          <TableHead>Check In</TableHead>
-          <TableHead>Check Out</TableHead>
-          <TableHead>Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.data.map((record: AttendanceRecord) => (
-          <TableRow key={record.id}>
-            <TableCell>{format(new Date(record.checkIn), "PP")}</TableCell>
-            <TableCell>{record.location.name}</TableCell>
-            <TableCell>{format(new Date(record.checkIn), "pp")}</TableCell>
-            <TableCell>
-              {record.checkOut ? format(new Date(record.checkOut), "pp") : "-"}
-            </TableCell>
-            <TableCell>{record.status}</TableCell>
+    <Card>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Location</TableHead>
+            <TableHead>Check In</TableHead>
+            <TableHead>Check Out</TableHead>
+            <TableHead>Status</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {data.data.map((record: AttendanceRecord) => (
+            <TableRow key={record.id}>
+              <TableCell>{format(new Date(record.checkIn), "PP")}</TableCell>
+              <TableCell>{record.location.name}</TableCell>
+              <TableCell>{format(new Date(record.checkIn), "pp")}</TableCell>
+              <TableCell>
+                {record.checkOut
+                  ? format(new Date(record.checkOut), "pp")
+                  : "-"}
+              </TableCell>
+              <TableCell>{record.status}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

@@ -8,24 +8,62 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// prisma {
-//   previewFeatures = ["extendedWhereUnique"]
-// }
-// generator client {
-//   previewFeatures = ["prisma"]
-// }
-
 model User {
   id                String       @id @default(cuid())
-  name              String
+  fullName          String
+  // name              String
   email             String       @unique
   password          String
-  role              Role         @default(EMPLOYEE)
-  department        String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  // role              Role
+  role              Role         @relation(fields: [roleId], references: [id])
+  roleId            String
   attendances       Attendance[]
   assignedLocations Location[]
+  division          String?
+  department        String?
+  section           String?
+  locationCategory  String
+  location          String
+  jobTitle          String
+  jobRole           String
+  mobile            String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?
+}
+
+// model User {
+//   id                String       @id @default(cuid())
+//   name              String
+//   email             String       @unique
+//   password          String
+//   role              Role         @default(EMPLOYEE)
+//   department        String?
+//   createdAt         DateTime     @default(now())
+//   updatedAt         DateTime     @updatedAt
+//   attendances       Attendance[]
+//   assignedLocations Location[]
+// }
+
+model Role {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  abilities Ability[]
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Ability {
+  id        String    @id @default(cuid())
+  action    String[] // Example: "create", "read", "update", "delete"
+  subject   String // Example: "Letter", "Organization"
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Location {
@@ -53,14 +91,16 @@ model Attendance {
   location   Location  @relation(fields: [locationId], references: [id])
 }
 
-enum Role {
-  ADMIN
-  MANAGER
-  EMPLOYEE
-}
+// enum Role {
+//   ADMIN
+//   MANAGER
+//   EMPLOYEE`
+// }
 
 enum Status {
   PRESENT
+
   LATE
   ABSENT
+  AUTOCHECKOUT
 }

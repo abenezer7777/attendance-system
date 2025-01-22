@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { SessionProvider } from "@/components/session-provider";
+import { Navbar } from "@/components/navbar";
 
 const inter = Inter({
   subsets: ["latin"], // Specify the subset explicitly
@@ -23,7 +24,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body
+        className={inter.className}
+        suppressHydrationWarning
+        
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -32,6 +37,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             <QueryProvider>
+              {/* <Navbar /> */}
               {children}
               <Toaster />
             </QueryProvider>
