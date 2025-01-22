@@ -173,7 +173,8 @@ export function AttendanceCheck() {
   };
 
   return (
-    <div className="bg-secondary p-3 ">
+    <>
+      {/* // <div className="bg-secondary p-3 "> */}
       <Card className="">
         {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
@@ -201,9 +202,9 @@ export function AttendanceCheck() {
           </div> */}
         </CardHeader>
 
-        <CardContent className="flex-1 flex flex-col items-center justify-between">
-          <div className="flex-1 flex items-center justify-center">
-            <div className="relative w-48 h-48">
+        <CardContent className=" w-full flex-1 flex flex-col items-center justify-between">
+          <div className="flex-1 flex items-center justify-center ">
+            <div className="relative w-48 h-48 ">
               <button
                 onClick={handleAttendance}
                 disabled={isChecking}
@@ -241,7 +242,7 @@ export function AttendanceCheck() {
 
           {/* <Separator /> */}
 
-          <Card className="w-full mt-8 border-none">
+          <Card className="mt-8 border-none w-full">
             <Separator />
             <CardContent className="pt-6 w-full">
               <div className="flex justify-between items-center">
@@ -302,6 +303,8 @@ export function AttendanceCheck() {
           </Card>
         </CardContent>
       </Card>
-    </div>
+
+      {/* </div> */}
+    </>
   );
 }

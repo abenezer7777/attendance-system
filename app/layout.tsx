@@ -24,11 +24,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={inter.className}
-        suppressHydrationWarning
-        
-      >
+      <head>
+        <meta charSet="UTF-8" />
+        {/* fit the content to the current device and avoid pushing effect of absolutely positioned element like drop down menu */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
+      </head>
+      <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

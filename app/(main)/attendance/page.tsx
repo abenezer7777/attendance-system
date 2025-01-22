@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
-async function touch() {
+async function AttendancePage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
@@ -20,23 +20,25 @@ async function touch() {
     //   </div>
     // </main>
     <>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0 ">
+      <div className="flex flex-1 flex-col gap- p-2 pt-0">
         <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-          <div className="aspect-video rounded-xl bg-muted/50">
+          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
+          <div>
             <AttendanceCheck />
           </div>
-          <div className="aspect-video rounded-xl bg-muted/50">
+
+          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
+          <div>
             <AttendanceTable />
           </div>
-          {/* <div className="aspect-video rounded-xl bg-muted/50" />
-      <div className="aspect-video rounded-xl bg-muted/50" /> */}
+          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
         </div>
         <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
-          <AttendanceList />
+          {/* <AttendanceTable /> */}
         </div>
       </div>
     </>
   );
 }
 
-export default touch;
+export default AttendancePage;

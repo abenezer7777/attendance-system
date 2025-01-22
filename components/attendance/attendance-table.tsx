@@ -91,13 +91,13 @@ export function AttendanceTable() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pt-2">
-        <CardTitle>My Attendance</CardTitle>
+        <CardTitle>Attendance</CardTitle>
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <CalendarDays className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground min-w-[120px] text-center">
                 {format(currentMonth, "MMMM yyyy")}
@@ -107,7 +107,7 @@ export function AttendanceTable() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <Select value={itemsPerPage} onValueChange={setItemsPerPage}>
+          {/* <Select value={itemsPerPage} onValueChange={setItemsPerPage}>
             <SelectTrigger className="w-[100px]">
               <SelectValue />
             </SelectTrigger>
@@ -116,32 +116,34 @@ export function AttendanceTable() {
               <SelectItem value="20">20 / page</SelectItem>
               <SelectItem value="50">50 / page</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="text-sm pl-0">
         <Tabs
           value={currentFilter}
           onValueChange={setCurrentFilter}
           className="w-full"
         >
           <TabsList className="mb-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="early">Early Leave</TabsTrigger>
-            <TabsTrigger value="late">Late In</TabsTrigger>
-            <TabsTrigger value="absent">Absents</TabsTrigger>
-            <TabsTrigger value="present">Present</TabsTrigger>
-            <TabsTrigger value="autocheckout">Auto Checkout</TabsTrigger>
+            <div className="grid-cols-2 md:grid-1 ">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="early">Early Leave</TabsTrigger>
+              <TabsTrigger value="late">Late In</TabsTrigger>
+              <TabsTrigger value="absent">Absents</TabsTrigger>
+              <TabsTrigger value="present">Present</TabsTrigger>
+              <TabsTrigger value="autocheckout">Auto Checkout</TabsTrigger>
+            </div>
           </TabsList>
 
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[400px] ">
             {data.data.map((record: AttendanceRecord) => (
               <div
                 key={record.id}
-                className="mb-4 grid grid-cols-[80px_1fr] gap-4 rounded-lg border p-4"
+                className="mb-4 grid grid-cols-[80px_1fr] gap-1 md:gap-4 rounded-lg border p-2 md:p-4 py-4"
               >
                 <div className="flex flex-col items-center justify-center">
-                  <span className="text-2xl font-bold">
+                  <span className="text-lg md:text-2xl font-bold">
                     {format(new Date(record.checkIn), "dd")}
                   </span>
                   <span className="text-sm text-muted-foreground">
@@ -151,13 +153,13 @@ export function AttendanceTable() {
 
                 <div className="flex flex-col space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 md:space-x-4">
                       <Clock className="h-4 w-4 text-muted-foreground" />
                       <div className="space-x-2">
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-xs md:text-sm text-muted-foreground">
                           Clock in
                         </span>
-                        <span className="font-medium">
+                        <span className="font-light md:font-medium">
                           {format(new Date(record.checkIn), "HH:mm")}
                         </span>
                       </div>
@@ -171,13 +173,13 @@ export function AttendanceTable() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2 md:space-x-4">
                       <Clock className="h-4 w-4 text-muted-foreground" />
                       <div className="space-x-2">
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-xs md:text-sm text-muted-foreground">
                           Clock out
                         </span>
-                        <span className="font-medium">
+                        <span className="font-light md:font-medium">
                           {record.checkOut
                             ? format(new Date(record.checkOut), "HH:mm")
                             : "--:--"}
@@ -189,7 +191,7 @@ export function AttendanceTable() {
                       <span className="text-sm text-muted-foreground">
                         Total hrs:
                       </span>
-                      <span className="font-medium">
+                      <span className="font-light md:font-medium">
                         {record.checkOut
                           ? format(
                               new Date(
