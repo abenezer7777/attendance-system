@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="w-full m-6">
+    <main className="w-full ">
       {/* <h1 className="text-3xl font-bold">Dashboard</h1> */}
 
       <AttendanceTable />

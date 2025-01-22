@@ -20,11 +20,11 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-9 w-9">
+        <Button variant="ghost" className="relative h-6 w-6 rounded-full">
+          <Avatar className="h-8 w-8">
             {session?.user?.email ? (
               <AvatarFallback>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full  bg-[#8cc640] text-white text-lg font-semibold">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full  bg-[#8cc640] text-white text-lg font-semibold">
                   {session.user.email.charAt(0).toUpperCase()}
                 </div>
               </AvatarFallback>

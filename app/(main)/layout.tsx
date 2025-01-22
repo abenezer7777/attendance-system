@@ -113,6 +113,8 @@
 //   );
 // }
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { ModeToggle } from "@/components/sidebar/modeToggel";
+import { UserNav } from "@/components/sidebar/user-nav";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -136,24 +138,33 @@ export default function AttendancesLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 sticky top-0 z-50 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-sidebar -">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+        <header className="flex h-16 sticky top-0 z-50 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-sidebar justify-between">
+          {/* <div className="flex items-center justify-between"> */}
+          <div>
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">
+                      Building Your Application
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
           </div>
+          <div className="flex items-center gap-4">
+            <UserNav />
+            <Separator orientation="vertical" className="h-6" />
+            <ModeToggle />
+          </div>
+          {/* </div> */}
         </header>
         {/* <div className="flex flex-1 flex-col gap-4 p-4 pt-0"> */}
         {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -161,7 +172,7 @@ export default function AttendancesLayout({
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div> */}
-        <main className="container mx-auto">{children}</main>
+        <main className="container mx-auto mt-4">{children}</main>
         {/* </div> */}
       </SidebarInset>
     </SidebarProvider>
