@@ -99,7 +99,6 @@ model Attendance {
 
 enum Status {
   PRESENT
-
   LATE
   ABSENT
   AUTOCHECKOUT
