@@ -112,6 +112,7 @@
 //     </main>
 //   );
 // }
+"use client";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ModeToggle } from "@/components/sidebar/modeToggel";
 import { UserNav } from "@/components/sidebar/user-nav";
@@ -129,11 +130,25 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useEffect } from "react";
 export default function AttendancesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        await fetch("/api/attendance/auto-checkout", {
+          method: "POST",
+        });
+      } catch (error) {
+        console.error("Auto-checkout check failed:", error);
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -172,7 +187,7 @@ export default function AttendancesLayout({
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div> */}
-        <main className="container mx-auto mt-4">{children}</main>
+        <main className="container px-2 mx-auto mt-4">{children}</main>
         {/* </div> */}
       </SidebarInset>
     </SidebarProvider>

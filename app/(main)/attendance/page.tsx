@@ -1,6 +1,7 @@
 import { AttendanceCheck } from "@/components/attendance/attendance-check";
 import { AttendanceList } from "@/components/attendance/attendance-list";
 import { AttendanceTable } from "@/components/attendance/attendance-table";
+import { MonthlyAttendance } from "@/components/attendance/monthly-attendance";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -20,23 +21,27 @@ async function AttendancePage() {
     //   </div>
     // </main>
     <>
-      <div className="flex flex-1 flex-col gap- p-2 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
-          <div>
-            <AttendanceCheck />
-          </div>
+      {/* <div className=" h-screen flex flex-1 flex-col gap-2 p-2 pt-0"> */}
+      <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+        {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
+        <div>
+          <AttendanceCheck />
+          {/* <div className="hidden md:block">
+              <MonthlyAttendance />
+            </div> */}
+        </div>
 
-          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
-          <div>
-            <AttendanceTable />
-          </div>
-          {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
+        {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
+        <div className="">
+          {/* <MonthlyAttendance /> */}
+          <AttendanceTable />
         </div>
-        <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
-          {/* <AttendanceTable /> */}
-        </div>
+        {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
       </div>
+      {/* <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
+          <AttendanceTable />
+        </div> */}
+      {/* </div> */}
     </>
   );
 }

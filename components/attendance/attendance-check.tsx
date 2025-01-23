@@ -31,6 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "../ui/separator";
+import { MonthlyAttendance } from "./monthly-attendance";
 
 export function AttendanceCheck() {
   const [isChecking, setIsChecking] = useState(false);
@@ -179,8 +180,8 @@ export function AttendanceCheck() {
         {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
         </h1> */}
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-3xl">
+        <CardHeader className="text-center space-y-1 md:space-y-2">
+          <CardTitle className="text-2xl md:text-3xl">
             {format(currentTime, "hh:mm a")}
           </CardTitle>
           <CardDescription>
@@ -204,7 +205,7 @@ export function AttendanceCheck() {
 
         <CardContent className=" w-full flex-1 flex flex-col items-center justify-between">
           <div className="flex-1 flex items-center justify-center ">
-            <div className="relative w-48 h-48 ">
+            <div className="relative w-36 h-36 md:w-48 md:h-48">
               <button
                 onClick={handleAttendance}
                 disabled={isChecking}
@@ -214,7 +215,7 @@ export function AttendanceCheck() {
                     : "bg-gradient-to-br from-lime-400 to-lime-600"
                 } flex flex-col items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-70`}
               >
-                <div className="flex flex-col items-center space-y-2 text-white ">
+                <div className="flex flex-col items-center space-y-1 md:space-y-2 text-white ">
                   {/* <TouchAppOutlinedIcon
                     sx={{
                       fontSize: "4rem",
@@ -225,10 +226,10 @@ export function AttendanceCheck() {
                   <Image
                     src={TapIconSvg}
                     alt="Tap Icon"
-                    width={80}
-                    height={80}
+                    width={70}
+                    height={70}
                   />
-                  <h1 className="text-xl font-semibold text-white">
+                  <h1 className="text-lg md:text-xl font-semibold text-white">
                     {isChecking
                       ? "Processing..."
                       : hasActiveCheckIn
@@ -242,14 +243,14 @@ export function AttendanceCheck() {
 
           {/* <Separator /> */}
 
-          <Card className="mt-8 border-none w-full">
+          <Card className="mt-6 border-none w-4/5 shadow-none">
             <Separator />
             <CardContent className="pt-6 w-full">
               <div className="flex justify-between items-center">
                 {/* Clock In */}
                 <div className="flex flex-col items-center space-y-1">
                   <div className="relative">
-                    <Clock size={28} className="text-muted-foreground" />
+                    <Clock size={24} className="text-muted-foreground" />
                     {/* Green Arrow Down */}
                     <ArrowDown
                       size={16}
@@ -259,7 +260,9 @@ export function AttendanceCheck() {
                     />
                     {/* <ClockArrowDown /> */}
                   </div>
-                  <p className="text-lg font-bold pt-1">{firstRecord}</p>
+                  <p className="text-base md:text-lg font-bold pt-1">
+                    {firstRecord}
+                  </p>
                   <span className="text-sm font-semibold mt-1 text-muted-foreground">
                     Clock In
                   </span>
@@ -268,7 +271,7 @@ export function AttendanceCheck() {
                 {/* Clock Out */}
                 <div className="flex flex-col items-center space-y-1">
                   <div className="relative">
-                    <Clock size={28} className="text-muted-foreground" />
+                    <Clock size={24} className="text-muted-foreground" />
                     {/* Red Arrow Up-Right */}
                     <ArrowUpRight
                       size={16}
@@ -277,7 +280,9 @@ export function AttendanceCheck() {
                     />
                     {/* <ClockArrowUpIcon /> */}
                   </div>
-                  <p className="text-lg font-bold  pt-1">{lastRecord}</p>
+                  <p className="text-base md:text-lg  font-bold  pt-1">
+                    {lastRecord}
+                  </p>
                   <span className="text-sm mt-1 font-semibold text-muted-foreground">
                     Clock Out
                   </span>
@@ -286,14 +291,16 @@ export function AttendanceCheck() {
                 {/* Total Hours */}
                 <div className="flex flex-col items-center space-y-1">
                   <div className="relative">
-                    <Circle size={28} className="text-muted-foreground" />
+                    <Circle size={24} className="text-muted-foreground" />
                     <Check
                       size={16}
                       strokeWidth={4}
                       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-500"
                     />
                   </div>
-                  <p className="text-lg font-bold pt-1">{totalHours}</p>
+                  <p className="text-base md:text-lg  font-bold pt-1">
+                    {totalHours}
+                  </p>
                   <span className="text-sm mt-1 font-semibold text-muted-foreground">
                     Total Hrs
                   </span>
@@ -302,6 +309,9 @@ export function AttendanceCheck() {
             </CardContent>
           </Card>
         </CardContent>
+        <div className="">
+          <MonthlyAttendance />
+        </div>
       </Card>
 
       {/* </div> */}
