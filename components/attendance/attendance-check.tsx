@@ -87,7 +87,7 @@ export function AttendanceCheck() {
     return new Date(isoString).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      // second: "2-digit",
       hour12: false,
     });
   };
@@ -175,20 +175,20 @@ export function AttendanceCheck() {
 
   return (
     <>
-      {/* // <div className="bg-secondary p-3 "> */}
-      <Card className="">
-        {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
+      <div className=" flex flex-col gap-3 ">
+        <Card className="">
+          {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
         </h1> */}
-        <CardHeader className="text-center space-y-1 md:space-y-2">
-          <CardTitle className="text-2xl md:text-3xl">
-            {format(currentTime, "hh:mm a")}
-          </CardTitle>
-          <CardDescription>
-            {format(currentTime, "MMMM dd, yyyy - EEEE")}
-          </CardDescription>
-          <CardDescription>{locationName}</CardDescription>
-          {/* <div className="flex flex-col items-center">
+          <CardHeader className="text-center space-y-1 md:space-y-2">
+            <CardTitle className="text-2xl md:text-3xl">
+              {format(currentTime, "hh:mm a")}
+            </CardTitle>
+            <CardDescription>
+              {format(currentTime, "MMMM dd, yyyy - EEEE")}
+            </CardDescription>
+            <CardDescription>{locationName}</CardDescription>
+            {/* <div className="flex flex-col items-center">
             <h2 className="text-3xl font-bold">
               {format(currentTime, "hh:mm a")}
             </h2>
@@ -201,120 +201,119 @@ export function AttendanceCheck() {
               </p>
             )}
           </div> */}
-        </CardHeader>
+          </CardHeader>
 
-        <CardContent className=" w-full flex-1 flex flex-col items-center justify-between">
-          <div className="flex-1 flex items-center justify-center ">
-            <div className="relative w-36 h-36 md:w-48 md:h-48">
-              <button
-                onClick={handleAttendance}
-                disabled={isChecking}
-                className={`w-full h-full rounded-full ${
-                  hasActiveCheckIn
-                    ? "bg-gradient-to-br from-red-500 to-pink-500"
-                    : "bg-gradient-to-br from-lime-400 to-lime-600"
-                } flex flex-col items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-70`}
-              >
-                <div className="flex flex-col items-center space-y-1 md:space-y-2 text-white ">
-                  {/* <TouchAppOutlinedIcon
+          <CardContent className=" w-full flex-1 flex flex-col items-center justify-between">
+            <div className="flex-1 flex items-center justify-center mb-2">
+              <div className="relative w-36 h-36 md:w-48 md:h-48">
+                <button
+                  onClick={handleAttendance}
+                  disabled={isChecking}
+                  className={`w-full h-full rounded-full ${
+                    hasActiveCheckIn
+                      ? "bg-gradient-to-br from-red-500 to-pink-500"
+                      : "bg-gradient-to-br from-lime-400 to-lime-600"
+                  } flex flex-col items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-70`}
+                >
+                  <div className="flex flex-col items-center space-y-1 md:space-y-2 text-white ">
+                    {/* <TouchAppOutlinedIcon
                     sx={{
                       fontSize: "4rem",
                       transform: "rotate(-20deg)",
                       filter: "drop-shadow(0 0 8px rgba(255,255,255,0.3))",
                     }}
                   /> */}
-                  <Image
-                    src={TapIconSvg}
-                    alt="Tap Icon"
-                    width={70}
-                    height={70}
-                  />
-                  <h1 className="text-lg md:text-xl font-semibold text-white">
-                    {isChecking
-                      ? "Processing..."
-                      : hasActiveCheckIn
-                      ? "Clock out"
-                      : "Clock in"}
-                  </h1>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          {/* <Separator /> */}
-
-          <Card className="mt-6 border-none w-4/5 shadow-none">
-            <Separator />
-            <CardContent className="pt-6 w-full">
-              <div className="flex justify-between items-center">
-                {/* Clock In */}
-                <div className="flex flex-col items-center space-y-1">
-                  <div className="relative">
-                    <Clock size={24} className="text-muted-foreground" />
-                    {/* Green Arrow Down */}
-                    <ArrowDown
-                      size={16}
-                      strokeWidth={4}
-                      // className="absolute -bottom-2 left-1/2 transform -translate-x-2/2 text-green-500"
-                      className="absolute top-2/2 left-6 transform -translate-x-1/2 -translate-y-1/2 text-green-500"
+                    <Image
+                      src={TapIconSvg}
+                      alt="Tap Icon"
+                      width={70}
+                      height={70}
                     />
-                    {/* <ClockArrowDown /> */}
+                    <h1 className="text-lg md:text-xl font-semibold text-white">
+                      {isChecking
+                        ? "Processing..."
+                        : hasActiveCheckIn
+                        ? "Clock out"
+                        : "Clock in"}
+                    </h1>
                   </div>
-                  <p className="text-base md:text-lg font-bold pt-1">
-                    {firstRecord}
-                  </p>
-                  <span className="text-sm font-semibold mt-1 text-muted-foreground">
-                    Clock In
-                  </span>
-                </div>
-
-                {/* Clock Out */}
-                <div className="flex flex-col items-center space-y-1">
-                  <div className="relative">
-                    <Clock size={24} className="text-muted-foreground" />
-                    {/* Red Arrow Up-Right */}
-                    <ArrowUpRight
-                      size={16}
-                      strokeWidth={4}
-                      className="absolute -bottom-0 left-6 transform -translate-x-1/2 text-red-500"
-                    />
-                    {/* <ClockArrowUpIcon /> */}
-                  </div>
-                  <p className="text-base md:text-lg  font-bold  pt-1">
-                    {lastRecord}
-                  </p>
-                  <span className="text-sm mt-1 font-semibold text-muted-foreground">
-                    Clock Out
-                  </span>
-                </div>
-
-                {/* Total Hours */}
-                <div className="flex flex-col items-center space-y-1">
-                  <div className="relative">
-                    <Circle size={24} className="text-muted-foreground" />
-                    <Check
-                      size={16}
-                      strokeWidth={4}
-                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-500"
-                    />
-                  </div>
-                  <p className="text-base md:text-lg  font-bold pt-1">
-                    {totalHours}
-                  </p>
-                  <span className="text-sm mt-1 font-semibold text-muted-foreground">
-                    Total Hrs
-                  </span>
-                </div>
+                </button>
               </div>
-            </CardContent>
-          </Card>
-        </CardContent>
+            </div>
+
+            <Separator />
+
+            <Card className=" border-none w-4/5 shadow-none pt-0">
+              {/* <Separator /> */}
+              <CardContent className="pt-6 w-full">
+                <div className="flex justify-between items-center">
+                  {/* Clock In */}
+                  <div className="flex flex-col items-center space-y-1">
+                    <div className="relative">
+                      <Clock size={24} className="text-muted-foreground" />
+                      {/* Green Arrow Down */}
+                      <ArrowDown
+                        size={16}
+                        strokeWidth={4}
+                        // className="absolute -bottom-2 left-1/2 transform -translate-x-2/2 text-green-500"
+                        className="absolute top-2/2 left-6 transform -translate-x-1/2 -translate-y-1/2 text-green-500"
+                      />
+                      {/* <ClockArrowDown /> */}
+                    </div>
+                    <p className="text-base md:text-lg font-bold pt-1">
+                      {firstRecord}
+                    </p>
+                    <span className="text-sm font-semibold mt-1 text-muted-foreground">
+                      Clock In
+                    </span>
+                  </div>
+
+                  {/* Clock Out */}
+                  <div className="flex flex-col items-center space-y-1">
+                    <div className="relative">
+                      <Clock size={24} className="text-muted-foreground" />
+                      {/* Red Arrow Up-Right */}
+                      <ArrowUpRight
+                        size={16}
+                        strokeWidth={4}
+                        className="absolute -bottom-0 left-6 transform -translate-x-1/2 text-red-500"
+                      />
+                      {/* <ClockArrowUpIcon /> */}
+                    </div>
+                    <p className="text-base md:text-lg  font-bold  pt-1">
+                      {lastRecord}
+                    </p>
+                    <span className="text-sm mt-1 font-semibold text-muted-foreground">
+                      Clock Out
+                    </span>
+                  </div>
+
+                  {/* Total Hours */}
+                  <div className="flex flex-col items-center space-y-1">
+                    <div className="relative">
+                      <Circle size={24} className="text-muted-foreground" />
+                      <Check
+                        size={16}
+                        strokeWidth={4}
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-500"
+                      />
+                    </div>
+                    <p className="text-base md:text-lg  font-bold pt-1">
+                      {totalHours}
+                    </p>
+                    <span className="text-sm mt-1 font-semibold text-muted-foreground">
+                      Total Hrs
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
+        </Card>
         <div className="">
           <MonthlyAttendance />
         </div>
-      </Card>
-
-      {/* </div> */}
+      </div>
     </>
   );
 }

@@ -17,10 +17,11 @@ async function fetchMonthlyAttendance() {
 }
 
 export function MonthlyAttendance() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["monthlyAttendance"],
-    queryFn: fetchMonthlyAttendance,
-  });
+  const { data, isLoading, error } =
+    useQuery({
+      queryKey: ["monthlyAttendance"],
+      queryFn: fetchMonthlyAttendance,
+    }) || [];
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading monthly attendance</div>;

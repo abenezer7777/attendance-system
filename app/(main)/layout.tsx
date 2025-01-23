@@ -187,7 +187,7 @@ export default function AttendancesLayout({
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div> */}
-        <main className="container px-2 mx-auto mt-4">{children}</main>
+        <main className="container p-2 mx-auto bg-secondary  ">{children}</main>
         {/* </div> */}
       </SidebarInset>
     </SidebarProvider>
