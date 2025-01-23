@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "../ui/separator";
 import { MonthlyAttendance } from "./monthly-attendance";
+import { Button } from "@/components/ui/button";
 
 export function AttendanceCheck() {
   const [isChecking, setIsChecking] = useState(false);
@@ -44,6 +45,7 @@ export function AttendanceCheck() {
     null
   );
   const [totalHours, setTotalHours] = useState("--:--");
+  const [isValidLocation, setIsValidLocation] = useState(false);
   const queryClient = useQueryClient();
 
   const { latitude, longitude, error: geoError } = useGeolocation();
@@ -59,7 +61,6 @@ export function AttendanceCheck() {
 
   // Fetch initial status
   useEffect(() => {
-    // Get nearest location first
     if (latitude && longitude) {
       getNearestLocation();
     }
@@ -76,9 +77,13 @@ export function AttendanceCheck() {
       if (location) {
         setCurrentLocationId(location.id);
         await checkActiveStatus(location.id);
+        setIsValidLocation(true);
+      } else {
+        setIsValidLocation(false);
       }
     } catch (error) {
       console.error("Failed to get nearest location:", error);
+      setIsValidLocation(false);
     }
   };
 
@@ -180,7 +185,7 @@ export function AttendanceCheck() {
           {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
         </h1> */}
-          <CardHeader className="text-center space-y-1 md:space-y-2">
+          <CardHeader className="text-center space-y-1 md:space-y-2 md:pb-0">
             <CardTitle className="text-2xl md:text-3xl">
               {format(currentTime, "hh:mm a")}
             </CardTitle>
@@ -203,12 +208,12 @@ export function AttendanceCheck() {
           </div> */}
           </CardHeader>
 
-          <CardContent className=" w-full flex-1 flex flex-col items-center justify-between">
-            <div className="flex-1 flex items-center justify-center mb-2">
-              <div className="relative w-36 h-36 md:w-48 md:h-48">
+          <CardContent className=" w-full flex-1 flex flex-col items-center justify-between md:space-y-4 ">
+            <div className="flex-1 flex items-center justify-center mb-2 ">
+              <div className="relative w-36 h-36 md:w-48 md:h-48 ">
                 <button
                   onClick={handleAttendance}
-                  disabled={isChecking}
+                  disabled={isChecking || !isValidLocation}
                   className={`w-full h-full rounded-full ${
                     hasActiveCheckIn
                       ? "bg-gradient-to-br from-red-500 to-pink-500"
