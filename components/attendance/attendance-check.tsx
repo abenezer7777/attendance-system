@@ -180,8 +180,8 @@ export function AttendanceCheck() {
 
   return (
     <>
-      <div className=" flex flex-col gap-3 ">
-        <Card className="">
+      <div className=" flex flex-col gap-6 ">
+        <Card className="border-none">
           {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
         </h1> */}
@@ -246,7 +246,7 @@ export function AttendanceCheck() {
               </div>
             </div>
 
-            <Separator />
+            <Separator className="border-t-2 border-dashed border-gray-200 bg-white w-11/12 " />
 
             <Card className=" border-none w-4/5 shadow-none pt-0">
               {/* <Separator /> */}

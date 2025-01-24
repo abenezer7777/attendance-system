@@ -22,7 +22,7 @@ async function AttendancePage() {
     // </main>
     <>
       {/* <div className=" h-screen flex flex-1 flex-col gap-2 p-2 pt-0"> */}
-      <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+      <div className="grid auto-rows-min gap-8 md:grid-cols-2">
         {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
         <div>
           <AttendanceCheck />
