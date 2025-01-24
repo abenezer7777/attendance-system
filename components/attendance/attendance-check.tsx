@@ -181,7 +181,7 @@ export function AttendanceCheck() {
   return (
     <>
       <div className=" flex flex-col gap-6 ">
-        <Card className="border-none">
+        <Card className="border-none ">
           {/* <h1 className="bg-lime-500 w-full rounded-t-sm text-white p-3 text-1xl font-bold">
           Mark Your Attendance!
         </h1> */}
@@ -208,17 +208,24 @@ export function AttendanceCheck() {
           </div> */}
           </CardHeader>
 
-          <CardContent className=" w-full flex-1 flex flex-col items-center justify-between md:space-y-4 ">
+          <CardContent className=" w-full flex-1 flex flex-col items-center justify-between md:space-y-4  ">
             <div className="flex-1 flex items-center justify-center mb-2 ">
               <div className="relative w-36 h-36 md:w-48 md:h-48 ">
                 <button
                   onClick={handleAttendance}
                   disabled={isChecking || !isValidLocation}
-                  className={`w-full h-full rounded-full ${
-                    hasActiveCheckIn
-                      ? "bg-gradient-to-br from-red-500 to-pink-500"
-                      : "bg-gradient-to-br from-lime-400 to-lime-600"
-                  } flex flex-col items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-70`}
+                  style={{
+                    background: !isValidLocation
+                      ? "linear-gradient(to bottom right, #4a4a4a, #2c2c2c)"
+                      : hasActiveCheckIn
+                      ? "#8dc63f"
+                      : "#8dc63f",
+                  }}
+                  className={`w-full h-full rounded-full flex flex-col items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-105  ${
+                    !isValidLocation
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:scale-105"
+                  }`}
                 >
                   <div className="flex flex-col items-center space-y-1 md:space-y-2 text-white ">
                     {/* <TouchAppOutlinedIcon
@@ -237,6 +244,8 @@ export function AttendanceCheck() {
                     <h1 className="text-lg md:text-xl font-semibold text-white">
                       {isChecking
                         ? "Processing..."
+                        : !isValidLocation
+                        ? "Out of Venue"
                         : hasActiveCheckIn
                         ? "Clock out"
                         : "Clock in"}

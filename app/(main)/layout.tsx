@@ -153,8 +153,7 @@ export default function AttendancesLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 sticky top-0 z-50 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-sidebar justify-between">
-          {/* <div className="flex items-center justify-between"> */}
+        <header className="flex h-14 sticky top-0 z-50 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-sidebar justify-between">
           <div>
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
@@ -179,7 +178,6 @@ export default function AttendancesLayout({
             <Separator orientation="vertical" className="h-6" />
             <ModeToggle />
           </div>
-          {/* </div> */}
         </header>
         {/* <div className="flex flex-1 flex-col gap-4 p-4 pt-0"> */}
         {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -187,7 +185,7 @@ export default function AttendancesLayout({
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div> */}
-        <main className="p-2 md:px-6  bg-gray-100  ">{children}</main>
+        <main className="p-2 md:px-6 bg-secondary">{children}</main>
         {/* </div> */}
       </SidebarInset>
     </SidebarProvider>

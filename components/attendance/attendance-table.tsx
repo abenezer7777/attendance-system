@@ -89,7 +89,7 @@ export function AttendanceTable() {
   };
 
   return (
-    <Card>
+    <Card className="">
       <CardHeader className="flex flex-row items-center justify-between pt-2">
         <CardTitle>Attendance</CardTitle>
         <div className="flex items-center space-x-4">
@@ -136,7 +136,7 @@ export function AttendanceTable() {
             </div>
           </TabsList>
 
-          <ScrollArea className="h-[400px] ">
+          <ScrollArea className="h-[605px] ">
             {data.data.map((record: AttendanceRecord) => (
               <div
                 key={record.id}
