@@ -136,19 +136,19 @@ export default function AttendancesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        await fetch("/api/attendance/auto-checkout", {
-          method: "POST",
-        });
-      } catch (error) {
-        console.error("Auto-checkout check failed:", error);
-      }
-    }, 60000);
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     try {
+  //       await fetch("/api/attendance/auto-checkout", {
+  //         method: "POST",
+  //       });
+  //     } catch (error) {
+  //       console.error("Auto-checkout check failed:", error);
+  //     }
+  //   }, 60000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
   return (
     <SidebarProvider>
       <AppSidebar />

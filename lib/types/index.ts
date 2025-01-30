@@ -15,8 +15,9 @@ export interface AttendanceRecord {
 }
 
 export interface User {
-  id: string;
-  name: string;
+  // id: string;
+  fullname: string;
   email: string;
   role: string;
+  roleId: string;
 }
