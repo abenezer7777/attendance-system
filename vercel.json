@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/attendance/auto-check",
+      "path": "/api/attendance/auto-checkout",
       "schedule": "*/5 * * * *"
     }
   ]
