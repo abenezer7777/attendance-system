@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/attendance/auto-check",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
