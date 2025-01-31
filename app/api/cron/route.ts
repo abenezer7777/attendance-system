@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { autoCheckoutJob } from "@/lib/cron";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   // Security check
   // const authHeader = req.headers.get("authorization");
   // console.log("authheader ", authHeader);
