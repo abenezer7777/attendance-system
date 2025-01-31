@@ -3,10 +3,10 @@ import { autoCheckoutJob } from "@/lib/cron";
 
 export async function GET(req: NextRequest) {
   // Security check
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  //   const authHeader = req.headers.get("authorization");
+  //   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  //   }
 
   try {
     const result = await autoCheckoutJob();
