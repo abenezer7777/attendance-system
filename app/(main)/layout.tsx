@@ -22,6 +22,22 @@ export default function AttendancesLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const { data: session, status } = useSession();
+
+  // if (!session?.user) {
+  //   redirect("/login");
+  // }
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login");
+  //   }
+  // }, [status, router]);
+
+  // // if (status === "loading") {
+  // //   return <p>Loading...</p>;
+  // // }
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -56,7 +56,7 @@ export function AttendanceTable() {
     queryFn: () => fetchAttendance(currentPage, currentFilter, currentMonth),
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading attendance records</div>;
 
   const getStatusColor = (status: string) => {
@@ -137,7 +137,7 @@ export function AttendanceTable() {
           </TabsList>
 
           <ScrollArea className="h-[605px] ">
-            {data.data.map((record: AttendanceRecord) => (
+            {data?.data.map((record: AttendanceRecord) => (
               <div
                 key={record.id}
                 className="mb-4 grid grid-cols-[80px_1fr] gap-1 md:gap-4 rounded-lg border p-2 md:p-4 py-4"
@@ -193,13 +193,17 @@ export function AttendanceTable() {
                       </span>
                       <span className="font-light md:font-medium">
                         {record.checkOut
-                          ? format(
-                              new Date(
+                          ? (() => {
+                              const totalMilliseconds =
                                 new Date(record.checkOut).getTime() -
-                                  new Date(record.checkIn).getTime()
-                              ),
-                              "HH:mm"
-                            )
+                                new Date(record.checkIn).getTime();
+                              const totalMinutes = Math.floor(
+                                totalMilliseconds / 60000
+                              ); // Convert to minutes
+                              const hours = Math.floor(totalMinutes / 60);
+                              const minutes = totalMinutes % 60;
+                              return `${hours}h ${minutes}m`;
+                            })()
                           : "--:--"}
                       </span>
                     </div>
@@ -214,9 +218,9 @@ export function AttendanceTable() {
               Showing {(currentPage - 1) * Number(itemsPerPage) + 1} to{" "}
               {Math.min(
                 currentPage * Number(itemsPerPage),
-                data.pagination.total
+                data?.pagination.total
               )}{" "}
-              of {data.pagination.total} entries
+              of {data?.pagination.total} entries
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -244,10 +248,10 @@ export function AttendanceTable() {
                 size="sm"
                 onClick={() =>
                   setCurrentPage((prev) =>
-                    Math.min(data.pagination.pages, prev + 1)
+                    Math.min(data?.pagination.pages, prev + 1)
                   )
                 }
-                disabled={currentPage === data.pagination.pages}
+                disabled={currentPage === data?.pagination.pages}
               >
                 Next
               </Button>

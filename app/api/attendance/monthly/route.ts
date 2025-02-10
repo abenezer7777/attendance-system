@@ -1,3 +1,4 @@
+// app/api/attendance/monthly/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -10,8 +11,17 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = session.user.id as string;
+    const url = new URL(req.url);
+    const queryUserId = url.searchParams.get("userId");
 
+    // Determine if the logged-in user is an admin.
+    const isAdmin =
+      session.user.role &&
+      (typeof session.user.role === "string"
+        ? session.user.role === "ADMIN"
+        : session.user.role.name === "ADMIN");
+
+    // Calculate the start and end of the current month.
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -20,53 +30,62 @@ export async function GET(req: Request) {
     endOfMonth.setMonth(endOfMonth.getMonth() + 1);
     endOfMonth.setHours(0, 0, 0, 0);
 
-    const [earlyLeave, absents, lateIn, totalLeaves] = await Promise.all([
+    // Build the base filter for the current month.
+    let baseFilter: any = {
+      checkIn: {
+        gte: startOfMonth,
+        lt: endOfMonth,
+      },
+    };
+
+    if (!isAdmin) {
+      // For non-admin users, always filter by their own ID.
+      baseFilter.userId = session.user.id;
+    } else {
+      // For admins, if a userId is provided in the query, use it.
+      if (queryUserId) {
+        baseFilter.userId = queryUserId;
+      }
+      // Otherwise, leave it out to get aggregated data for all employees.
+    }
+
+    // Run queries concurrently.
+    const [earlyLeave, present, absents, lateIn, total] = await Promise.all([
       prisma.attendance.count({
         where: {
-          userId,
+          ...baseFilter,
           status: "PRESENT",
-          checkIn: {
-            gte: startOfMonth,
-            lt: endOfMonth,
-          },
         },
       }),
       prisma.attendance.count({
         where: {
-          userId,
+          ...baseFilter,
+          status: "PRESENT",
+        },
+      }),
+      prisma.attendance.count({
+        where: {
+          ...baseFilter,
           status: "ABSENT",
-          checkIn: {
-            gte: startOfMonth,
-            lt: endOfMonth,
-          },
         },
       }),
       prisma.attendance.count({
         where: {
-          userId,
+          ...baseFilter,
           status: "LATE",
-          checkIn: {
-            gte: startOfMonth,
-            lt: endOfMonth,
-          },
         },
       }),
       prisma.attendance.count({
-        where: {
-          userId,
-          checkIn: {
-            gte: startOfMonth,
-            lt: endOfMonth,
-          },
-        },
+        where: baseFilter,
       }),
     ]);
 
     return NextResponse.json({
       earlyLeave,
+      present,
       absents,
       lateIn,
-      totalLeaves,
+      total,
     });
   } catch (error) {
     console.error("Monthly attendance error:", error);

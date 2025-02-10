@@ -33,8 +33,10 @@ import {
 import { Separator } from "../ui/separator";
 import { MonthlyAttendance } from "./monthly-attendance";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 export function AttendanceCheck() {
+  const { data: session, status } = useSession();
   const [isChecking, setIsChecking] = useState(false);
   const [hasActiveCheckIn, setHasActiveCheckIn] = useState(false);
   const [locationName, setLocationName] = useState("");
@@ -325,7 +327,7 @@ export function AttendanceCheck() {
           </CardContent>
         </Card>
         <div className="">
-          <MonthlyAttendance />
+          <MonthlyAttendance userId={session?.user.id} />
         </div>
       </div>
     </>

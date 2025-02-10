@@ -33,19 +33,6 @@ model User {
   deletedAt         DateTime?
 }
 
-// model User {
-//   id                String       @id @default(cuid())
-//   name              String
-//   email             String       @unique
-//   password          String
-//   role              Role         @default(EMPLOYEE)
-//   department        String?
-//   createdAt         DateTime     @default(now())
-//   updatedAt         DateTime     @updatedAt
-//   attendances       Attendance[]
-//   assignedLocations Location[]
-// }
-
 model Role {
   id        String    @id @default(cuid())
   name      String    @unique

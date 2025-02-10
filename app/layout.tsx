@@ -6,6 +6,11 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { SessionProvider } from "@/components/session-provider";
 import { Navbar } from "@/components/navbar";
+import AppProviders from "./app-providers";
+import AbilityProvider from "@/components/casl/AbilityProvider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import AuthWatcher from "@/components/AuthWatcher";
 
 const inter = Inter({
   subsets: ["latin"], // Specify the subset explicitly
@@ -17,11 +22,12 @@ export const metadata: Metadata = {
   description: "Geofenced attendance tracking system",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -39,13 +45,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SessionProvider>
-            <QueryProvider>
-              {/* <Navbar /> */}
-              {children}
-              <Toaster />
-            </QueryProvider>
-          </SessionProvider>
+          <AppProviders session={session}>
+            <AuthWatcher />
+            <AbilityProvider>
+              <main className="flex-1 h-screen">{children}</main>
+            </AbilityProvider>
+            <Toaster />
+          </AppProviders>
         </ThemeProvider>
       </body>
     </html>

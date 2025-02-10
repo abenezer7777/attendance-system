@@ -57,6 +57,9 @@ export function CreateUserForm() {
       // username: "",
       password: "",
       roleName: "",
+      division: "",
+      department: "",
+      section: "",
       location: "",
       locationCategory: "",
       jobTitle: "",
@@ -81,6 +84,9 @@ export function CreateUserForm() {
         employeeId: "",
         password: "",
         roleName: "",
+        division: "",
+        department: "",
+        section: "",
         location: "",
         locationCategory: "",
         jobTitle: "",
@@ -109,13 +115,13 @@ export function CreateUserForm() {
     <Drawer>
       {/* <div className="max-w-lg mx-auto p-6"> */}
       <div className="flex justify-end ">
-        {/* <Can I={"create"} a={"User"}> */}
-        <DrawerTrigger asChild>
-          <Button size={"sm"}>
-            User <Plus className="w-4 mx-1" />
-          </Button>
-        </DrawerTrigger>
-        {/* </Can> */}
+        <Can I={"create"} a={"User"}>
+          <DrawerTrigger asChild>
+            <Button size={"sm"}>
+              User <Plus className="w-4 mx-1" />
+            </Button>
+          </DrawerTrigger>
+        </Can>
       </div>
       <DrawerContent>
         <DrawerHeader className="bg-[#8cc640] text-white">
@@ -219,6 +225,48 @@ export function CreateUserForm() {
                           ))}
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Division */}
+              <FormField
+                control={form.control}
+                name="division"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Division</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter Division" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Department */}
+              <FormField
+                control={form.control}
+                name="department"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Department</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter Department" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* section */}
+              <FormField
+                control={form.control}
+                name="section"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Section</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter Section" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

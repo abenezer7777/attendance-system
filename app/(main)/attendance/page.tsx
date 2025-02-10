@@ -25,7 +25,7 @@ async function AttendancePage() {
       <div className="grid auto-rows-min gap-8 md:grid-cols-2">
         {/* <div className="aspect-video rounded-xl bg-muted/50" /> */}
         <div>
-          <AttendanceCheck  />
+          <AttendanceCheck />
           {/* <div className="hidden md:block">
               <MonthlyAttendance />
             </div> */}

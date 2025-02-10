@@ -9,39 +9,58 @@ import { CreateUserForm } from "./_components/createUserForm";
 import { useSession } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Papa from "papaparse";
 
-const OrganizationPage = () => {
-  const { data: session, status } = useSession(); // Get the user's session
+const userPage = () => {
+  // Always call hooks at the top level
+  const { data: session, status } = useSession(); // session hook
   const router = useRouter();
+  const { data: user = [], isLoading: usersLoading } = useGetUsers(); // always call this hook
+  console.log("session from user", session);
 
-  // Redirect if the user is not authorized
-  React.useEffect(() => {
-    if (status === "authenticated" && session?.user?.role === "USER") {
-      router.push("/unauthorized"); // Redirect to an unauthorized page
-    }
-  }, [status, session, router]);
+  // Use effect for redirection if user role is not authorized
+  // React.useEffect(() => {
+  //   if (status === "authenticated" && session?.user?.role.name === "EMPLOYEE") {
+  //     router.push("/unauthorized");
+  //   }
+  // }, [status, session, router]);
 
-  // Optionally, display a loading state while checking authentication
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-  const { data: user = [], isLoading } = useGetUsers();
-  // console.log("user user", user.role?.name);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // // Conditionally render loading state after hooks have been called
+  // if (status === "loading" || usersLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
-    <div className="h-full flex-1 flex-col space-y-8 p-8 ">
+    <div className="h-full flex-1 flex-col space-y-8 p-8">
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h1 className="text-muted-foreground">
             Here&apos;s a list of Users!
           </h1>
         </div>
-        <div className="flex items-center ">
+        <div className="flex items-center gap-3 ">
           <CreateUserForm />
+          <Button
+            onClick={() => {
+              const csvData = user.map((user: any) => ({
+                employeeId: user.employeeId,
+                fullName: user.fullName,
+                email: user.email,
+                department: user.department,
+                lastActive: user.lastActive,
+              }));
+              const csv = Papa.unparse(csvData);
+              const blob = new Blob([csv], { type: "text/csv" });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "users-report.csv";
+              a.click();
+            }}
+          >
+            Export Users CSV
+          </Button>
         </div>
       </div>
       <DataTable data={user || []} columns={columns} />
@@ -49,4 +68,4 @@ const OrganizationPage = () => {
   );
 };
 
-export default OrganizationPage;
+export default userPage;

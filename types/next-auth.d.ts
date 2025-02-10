@@ -15,7 +15,11 @@ declare module "next-auth" {
       id: string;
       email: string;
       name: string;
-      role: string;
+      role: {
+        id: string;
+        name: string;
+        // include any other properties you need...
+      };
     };
   }
 
