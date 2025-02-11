@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,45 +40,60 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const groups = [
-  {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
-  },
-  {
-    label: "Teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-];
+// Define types for division and department
+type Division = {
+  label: string;
+  value: string;
+};
 
-type Team = (typeof groups)[number]["teams"][number];
+type Department = {
+  label: string;
+  value: string;
+};
+
+// Define a type for the team (either Division or Department)
+type Team = Division | Department;
+
+// Fetch divisions and departments
+async function fetchDivisionsAndDepartments() {
+  const res = await fetch("/api/org/divisions-departments");
+  if (!res.ok) {
+    throw new Error("Failed to fetch divisions and departments");
+  }
+  return res.json();
+}
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
-interface TeamSwitcherProps extends PopoverTriggerProps {}
+interface TeamSwitcherProps extends PopoverTriggerProps {
+  onTeamChange: (team: Team) => void;
+}
 
-export default function TeamSwitcher({ className }: TeamSwitcherProps) {
+export default function TeamSwitcher({
+  className,
+  onTeamChange,
+}: TeamSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
-  );
+  const [selectedTeam, setSelectedTeam] = React.useState<Team>({
+    label: "All",
+    value: "all",
+  });
+
+  // Fetch divisions and departments using react-query
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["divisionsAndDepartments"],
+    queryFn: fetchDivisionsAndDepartments,
+  });
+
+  React.useEffect(() => {
+    onTeamChange(selectedTeam);
+  }, [selectedTeam, onTeamChange]);
+
+  const divisions = data?.divisions || [];
+  const departments = data?.departments || [];
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -90,14 +106,6 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[200px] justify-between", className)}
           >
-            <Avatar className="mr-2 h-5 w-5">
-              <AvatarImage
-                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
-                alt={selectedTeam.label}
-                className="grayscale"
-              />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
             {selectedTeam.label}
             <ChevronsUpDown className="ml-auto opacity-50" />
           </Button>
@@ -107,38 +115,66 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
             <CommandInput placeholder="Search team..." />
             <CommandList>
               <CommandEmpty>No team found.</CommandEmpty>
-              {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
-                  {group.teams.map((team) => (
-                    <CommandItem
-                      key={team.value}
-                      onSelect={() => {
-                        setSelectedTeam(team);
-                        setOpen(false);
-                      }}
-                      className="text-sm"
-                    >
-                      <Avatar className="mr-2 h-5 w-5">
-                        <AvatarImage
-                          src={`https://avatar.vercel.sh/${team.value}.png`}
-                          alt={team.label}
-                          className="grayscale"
-                        />
-                        <AvatarFallback>SC</AvatarFallback>
-                      </Avatar>
-                      {team.label}
-                      <Check
-                        className={cn(
-                          "ml-auto",
-                          selectedTeam.value === team.value
-                            ? "opacity-100"
-                            : "opacity-0"
-                        )}
-                      />
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
+              <CommandGroup heading="Divisions">
+                <CommandItem
+                  key="all"
+                  onSelect={() => {
+                    setSelectedTeam({ label: "All", value: "all" });
+                    setOpen(false);
+                  }}
+                  className="text-sm"
+                >
+                  All Divisions
+                  <Check
+                    className={cn(
+                      "ml-auto",
+                      selectedTeam.value === "all" ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+                {divisions.map((division: Division) => (
+                  <CommandItem
+                    key={division.value}
+                    onSelect={() => {
+                      setSelectedTeam(division);
+                      setOpen(false);
+                    }}
+                    className="text-sm"
+                  >
+                    {division.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        selectedTeam.value === division.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandGroup heading="Departments">
+                {departments.map((department: Department) => (
+                  <CommandItem
+                    key={department.value}
+                    onSelect={() => {
+                      setSelectedTeam(department);
+                      setOpen(false);
+                    }}
+                    className="text-sm"
+                  >
+                    {department.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        selectedTeam.value === department.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
             </CommandList>
             <CommandSeparator />
             <CommandList>
