@@ -32,11 +32,11 @@ model User {
 
 model Organization {
   id        String         @id @default(cuid())
-  name      String // e.g., "Information Security", "Information System"
-  level     OrgLevel // Indicates whether it's a division, department, or section
-  parentId  String? // Optional parent ID for hierarchy
+  name      String
+  level     OrgLevel
+  parentId  String?
   parent    Organization?  @relation("ParentChild", fields: [parentId], references: [id])
-  children  Organization[] @relation("ParentChild") // Child units (e.g., sections under a department)
+  children  Organization[] @relation("ParentChild")
   users     User[] // Users associated with this unit
   locations Location[]     @relation("OrgLocation") // Many-to-many relation to Location
   createdAt DateTime       @default(now())
