@@ -3,34 +3,56 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
   id                String       @id @default(cuid())
   employeeId        String       @unique
   fullName          String
-  // name              String
   email             String       @unique
   password          String
-  // role              Role
   role              Role         @relation(fields: [roleId], references: [id])
   roleId            String
   attendances       Attendance[]
-  assignedLocations Location[]
-  division          String?
-  department        String?
-  section           String?
-  locationCategory  String
-  location          String
-  jobTitle          String
-  jobRole           String
+  assignedLocations Location[] // Many-to-many relation to Location
+  organization      Organization @relation(fields: [organizationId], references: [id])
+  organizationId    String // Foreign key to OrganizationUnit
+  supervisor        User?        @relation("SupervisorEmployee", fields: [supervisorId], references: [id])
+  supervisorId      String? // Foreign key to supervisor (another User)
+  supervisedUsers   User[]       @relation("SupervisorEmployee") // Opposite relation for users supervised by this user
+  jobTitle          String // e.g., "Accountant"
+  jobRole           String // e.g., "Financial Analyst"
   mobile            String?
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   deletedAt         DateTime?
+
+  @@index([employeeId, email, organizationId])
+}
+
+model Organization {
+  id        String         @id @default(cuid())
+  name      String // e.g., "Information Security", "Information System"
+  level     OrgLevel // Indicates whether it's a division, department, or section
+  parentId  String? // Optional parent ID for hierarchy
+  parent    Organization?  @relation("ParentChild", fields: [parentId], references: [id])
+  children  Organization[] @relation("ParentChild") // Child units (e.g., sections under a department)
+  users     User[] // Users associated with this unit
+  locations Location[]     @relation("OrgLocation") // Many-to-many relation to Location
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  deletedAt DateTime? // Optional soft delete field
+
+  @@index([name, level])
+}
+
+enum OrgLevel {
+  DIVISION
+  DEPARTMENT
+  SECTION
 }
 
 model Role {
@@ -41,29 +63,65 @@ model Role {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  @@index([name])
 }
 
 model Ability {
   id        String    @id @default(cuid())
-  action    String[] // Example: "create", "read", "update", "delete"
-  subject   String // Example: "Letter", "Organization"
+  action    String[] // Example: "create", "read", "update", "delete" (single action per ability for simplicity)
+  subject   String // Example: "Attendance", "Location"
   role      Role      @relation(fields: [roleId], references: [id])
   roleId    String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  @@index([action, subject, roleId])
 }
 
 model Location {
-  id          String       @id @default(cuid())
-  name        String
-  latitude    Float
-  longitude   Float
-  radius      Float // in meters
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  users       User[]
-  attendances Attendance[]
+  id            String           @id @default(cuid())
+  name          String // e.g., "Legahar-Head Quarter", "Head Office"
+  category      LocationCategory // e.g., "HEAD_QUARTER"
+  latitude      Float // For geofencing
+  longitude     Float // For geofencing
+  radius        Float // Radius in meters for geofencing
+  organizations Organization[]   @relation("OrgLocation") // Many-to-many relation to Organization
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime? // Soft delete
+  users         User[] // Users assigned to this location (many-to-many)
+  attendances   Attendance[] // Attendance records at this location
+
+  @@index([name, category])
+}
+
+enum LocationCategory {
+  CAAZ
+  CER
+  CNR
+  CWR
+  EAAZ
+  EER
+  ER
+  HEAD_QUARTER
+  NAAZ
+  NEER
+  NER
+  NNWR
+  NR
+  NWR
+  SAAZ
+  SER
+  SR
+  SSWR
+  SWAAZ
+  SWR
+  SWWR
+  WAAZ
+  WWR
+  WR
 }
 
 model Attendance {
@@ -77,15 +135,12 @@ model Attendance {
   updatedAt  DateTime  @updatedAt
   user       User      @relation(fields: [userId], references: [id])
   location   Location  @relation(fields: [locationId], references: [id])
+
+  @@index([userId, locationId, checkIn])
 }
 
-// enum Role {
-//   ADMIN
-//   MANAGER
-//   EMPLOYEE`
-// }
-
 enum Status {
+  EARLYLEAVE
   PRESENT
   LATE
   ABSENT
