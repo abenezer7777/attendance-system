@@ -20,9 +20,6 @@ model User {
   assignedLocations Location[] // Many-to-many relation to Location
   organization      Organization @relation(fields: [organizationId], references: [id])
   organizationId    String // Foreign key to OrganizationUnit
-  supervisor        User?        @relation("SupervisorEmployee", fields: [supervisorId], references: [id])
-  supervisorId      String? // Foreign key to supervisor (another User)
-  supervisedUsers   User[]       @relation("SupervisorEmployee") // Opposite relation for users supervised by this user
   jobTitle          String // e.g., "Accountant"
   jobRole           String // e.g., "Financial Analyst"
   mobile            String?
