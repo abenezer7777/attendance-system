@@ -36,6 +36,11 @@ const mainItems = [
     url: "/dashboard",
     icon: LayoutDashboard,
   },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: Home,
+  },
   // {
   //   title: "attendance2",
   //   url: "/checkIn",
