@@ -17,22 +17,34 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import Spinner from "@/components/Spinner";
-import { createUserSchema } from "@/schemas/validationSchema";
+import { createUserSchema } from "@/lib/schemas/validationSchema";
 import {
   Drawer,
-  DrawerClose,
+  DrawerTrigger,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
+  DrawerFooter,
+  DrawerClose,
 } from "@/components/ui/drawer";
 import { Can } from "@/components/casl/Can";
 import { Plus } from "lucide-react";
-import { useCreateUserMutation, useGetRoles } from "./user.query";
+import {
+  useCreateUserMutation,
+  useGetRoles,
+  useGetUsers,
+  useGetSupervisors,
+} from "./user.query";
+import {
+  useGetLocations,
+  useGetLocationsOnOrgnization,
+} from "@/app/(main)/location/loc.query";
+import { useGetAllOrganizationsForTable } from "@/app/(main)/organization/org.query";
 import { useTheme } from "next-themes";
 import { useQueryClient } from "@tanstack/react-query";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 import {
   Select,
   SelectContent,
@@ -40,6 +52,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>;
 
@@ -54,141 +82,119 @@ export function CreateUserForm() {
       employeeId: "",
       email: "",
       fullName: "",
-      // username: "",
       password: "",
       roleName: "",
-      division: "",
-      department: "",
-      section: "",
-      location: "",
-      locationCategory: "",
+      organizationId: "",
+      assignedLocationIds: [],
       jobTitle: "",
       jobRole: "",
+      mobile: "",
+      supervisorId: "",
     },
   });
-  const { data: roles } = useGetRoles();
-  const { mutateAsync: createUser } = useCreateUserMutation();
 
-  async function onSubmit(data: z.infer<typeof createUserSchema>) {
+  const { data: roles } = useGetRoles();
+  const { data: organizations } = useGetAllOrganizationsForTable();
+  // const { data: locations } = useGetLocationsOnOrgnization(
+  //   form.watch("organizationId")
+  // );
+  const { data: locations } = useGetLocations();
+  const { data: users } = useGetUsers();
+  const { mutateAsync: createUser } = useCreateUserMutation();
+  console.log("locations fron user create", locations);
+
+  async function onSubmit(data: CreateUserFormValues) {
     try {
       setSubmitting(true);
       await createUser(data);
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast({
-        // variant: "success",
-        title: "User Created Succesfully",
-      });
-      form.reset({
-        email: "",
-        fullName: "",
-        employeeId: "",
-        password: "",
-        roleName: "",
-        division: "",
-        department: "",
-        section: "",
-        location: "",
-        locationCategory: "",
-        jobTitle: "",
-        jobRole: "",
-
-        // username: "",
-      }); // Reset to default values
+      toast({ title: "User Created Successfully" });
+      form.reset();
     } catch (error: any) {
-      setSubmitting(false);
-      // console.log("🚀 ~ onSubmit ~ error:", error);
-      const errorMessage =
-        error?.response?.data?.message ||
-        "An unexpected error occurred. Please try again.";
-
       toast({
+        title: "Error creating user",
+        description: error.message,
         variant: "destructive",
-        title: "Error",
-        description: errorMessage,
       });
     } finally {
-      setSubmitting(false); // Stop spinner after submission attempt
+      setSubmitting(false);
     }
   }
 
   return (
     <Drawer>
-      {/* <div className="max-w-lg mx-auto p-6"> */}
-      <div className="flex justify-end ">
-        <Can I={"create"} a={"User"}>
-          <DrawerTrigger asChild>
-            <Button size={"sm"}>
-              User <Plus className="w-4 mx-1" />
-            </Button>
-          </DrawerTrigger>
-        </Can>
-      </div>
+      <DrawerTrigger asChild>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" /> Create User
+        </Button>
+      </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="bg-[#8cc640] text-white">
-          <DrawerTitle className="text-xl font-semibold">
-            Create New User
-          </DrawerTitle>
-          <DrawerDescription className="text-sm text-white">
-            Complete the form below to add a new User.
-          </DrawerDescription>
+          <DrawerTitle>Create New User</DrawerTitle>
         </DrawerHeader>
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className={` flex flex-col justify-between h-full`}
+            className="space-y-4 p-4"
           >
-            <div className="grid sm:grid-cols-2 gap-6 py-4 px-6 ">
-              {/* Employee Number */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              {/* Employee ID */}
               <FormField
-                control={form.control}
                 name="employeeId"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Employee Number <span className="text-red-500">*</span>
+                      Employee ID<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter employee number" />
+                      <Input {...field} placeholder="Enter employee ID" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               {/* Email */}
               <FormField
-                control={form.control}
                 name="email"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-red-500">*</span>
+                      Email<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter email" />
+                      <Input
+                        type="email"
+                        {...field}
+                        placeholder="Enter email"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Name */}
+
+              {/* Full Name */}
               <FormField
-                control={form.control}
                 name="fullName"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter name" />
+                      <Input {...field} placeholder="Enter full name" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               {/* Password */}
               <FormField
-                control={form.control}
                 name="password"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
@@ -203,23 +209,25 @@ export function CreateUserForm() {
                   </FormItem>
                 )}
               />
+
+              {/* Role */}
               <FormField
-                control={form.control}
                 name="roleName"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
                     <FormControl>
                       <Select
-                        onValueChange={(value) => field.onChange(value)} // Update form field value
-                        defaultValue={field.value} // Set default value to current field value
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
                       >
-                        <SelectTrigger className="w-full rounded-none border border-gray-300">
-                          <SelectValue placeholder="Select a role" />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role" />
                         </SelectTrigger>
                         <SelectContent>
                           {roles?.map((role: any) => (
-                            <SelectItem key={role.name} value={role.name}>
+                            <SelectItem key={role.id} value={role.name}>
                               {role.name}
                             </SelectItem>
                           ))}
@@ -230,118 +238,221 @@ export function CreateUserForm() {
                   </FormItem>
                 )}
               />
-              {/* Division */}
+
+              {/* Organization */}
               <FormField
+                name="organizationId"
                 control={form.control}
-                name="division"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Division</FormLabel>
+                    <FormLabel>Organization</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter Division" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Department */}
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter Department" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* section */}
-              <FormField
-                control={form.control}
-                name="section"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Section</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter Section" />
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Organization" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {organizations?.map((org: any) => (
+                            <SelectItem key={org.id} value={org.id}>
+                              {org.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Location */}
+              {/* Supervisor */}
               <FormField
                 control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter Location" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                name="supervisorId"
+                render={({ field }) => {
+                  const [open, setOpen] = useState(false);
+                  const [search, setSearch] = useState("");
+                  const [page, setPage] = useState(1);
+                  const { data, isFetching } = useGetSupervisors(search, page);
+
+                  // Ensure data.users exists and is an array
+                  const users = data?.users || [];
+                  const hasMore = data?.hasMore || false;
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Supervisor</FormLabel>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between"
+                            >
+                              {users.find(
+                                (user: any) => user.id === field.value
+                              )?.fullName || "Select supervisor..."}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command shouldFilter={false}>
+                            <CommandInput
+                              placeholder="Search supervisors..."
+                              value={search}
+                              onValueChange={setSearch}
+                              className="pointer-events-auto"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No supervisor found.</CommandEmpty>
+                              <CommandGroup className="pointer-events-auto">
+                                <div className="max-h-[200px] overflow-y-auto">
+                                  {users.map((user: any) => (
+                                    <CommandItem
+                                      key={user.id}
+                                      value={user.id}
+                                      onSelect={() => {
+                                        field.onChange(
+                                          user.id === field.value ? "" : user.id
+                                        );
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          field.value === user.id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {user.fullName}
+                                    </CommandItem>
+                                  ))}
+                                  {hasMore && (
+                                    <div className="py-2 px-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="w-full"
+                                        onClick={() => setPage(page + 1)}
+                                        disabled={isFetching}
+                                      >
+                                        {isFetching ? <Spinner /> : "Load more"}
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
-              {/* locationCategory */}
+
+              {/* Job Title */}
               <FormField
-                control={form.control}
-                name="locationCategory"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>location Category</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter location Category" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* jobTitle */}
-              <FormField
-                control={form.control}
                 name="jobTitle"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Job Title</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter jobTitle" />
+                      <Input {...field} placeholder="Enter Job Title" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* jobRole */}
+
+              {/* Job Role */}
               <FormField
-                control={form.control}
                 name="jobRole"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Job Role</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter jobRole" />
+                      <Input {...field} placeholder="Enter Job Role" />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Mobile */}
+              <FormField
+                name="mobile"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter Mobile Number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Assigned Locations (Multi-select via checkboxes) */}
+              <FormField
+                control={form.control}
+                name="assignedLocationIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assigned Locations</FormLabel>
+                    <div className="space-y-2 border p-2 rounded-md max-h-32 overflow-y-auto">
+                      {locations?.map((loc: any) => (
+                        <label
+                          key={loc.id}
+                          className="flex items-center space-x-2"
+                        >
+                          <input
+                            type="checkbox"
+                            value={loc.id}
+                            checked={field.value?.includes(loc.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                field.onChange([...field.value, loc.id]);
+                              } else {
+                                field.onChange(
+                                  field.value.filter(
+                                    (id: string) => id !== loc.id
+                                  )
+                                );
+                              }
+                            }}
+                          />
+                          <span>{loc.name}</span>
+                        </label>
+                      ))}
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
-            <div className="flex justify-end gap-4 px-6 py-4 border-t border-gray-200">
+            <DrawerFooter className="flex justify-end gap-4">
               <DrawerClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DrawerClose>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? <Spinner /> : "Create"}
               </Button>
-            </div>
+            </DrawerFooter>
           </form>
         </Form>
-        {/* </div> */}
       </DrawerContent>
     </Drawer>
   );

@@ -50,7 +50,7 @@ export async function GET(req: Request) {
     }
 
     // Run queries concurrently.
-    const [earlyLeave, present, absents, lateIn, total] = await Promise.all([
+    const [present, earlyLeave, absents, lateIn, total] = await Promise.all([
       prisma.attendance.count({
         where: {
           ...baseFilter,
@@ -60,7 +60,7 @@ export async function GET(req: Request) {
       prisma.attendance.count({
         where: {
           ...baseFilter,
-          status: "PRESENT",
+          status: "EARLYLEAVE",
         },
       }),
       prisma.attendance.count({
@@ -81,8 +81,8 @@ export async function GET(req: Request) {
     ]);
 
     return NextResponse.json({
-      earlyLeave,
       present,
+      earlyLeave,
       absents,
       lateIn,
       total,

@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Papa from "papaparse";
+import { CSVUpload } from "./_components/csv-upload";
 
 const userPage = () => {
   // Always call hooks at the top level
@@ -20,16 +21,16 @@ const userPage = () => {
   console.log("session from user", session);
 
   // Use effect for redirection if user role is not authorized
-  // React.useEffect(() => {
-  //   if (status === "authenticated" && session?.user?.role.name === "EMPLOYEE") {
-  //     router.push("/unauthorized");
-  //   }
-  // }, [status, session, router]);
+  React.useEffect(() => {
+    if (status === "authenticated" && session?.user?.role.name === "EMPLOYEE") {
+      router.push("/unauthorized");
+    }
+  }, [status, session, router]);
 
-  // // Conditionally render loading state after hooks have been called
-  // if (status === "loading" || usersLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  // Conditionally render loading state after hooks have been called
+  if (status === "loading" || usersLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="h-full flex-1 flex-col space-y-8 p-8">
@@ -41,6 +42,7 @@ const userPage = () => {
         </div>
         <div className="flex items-center gap-3 ">
           <CreateUserForm />
+          <CSVUpload />
           <Button
             onClick={() => {
               const csvData = user.map((user: any) => ({

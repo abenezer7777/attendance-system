@@ -1,0 +1,227 @@
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+//   // directUrl = env("DIRECT_URL")
+// }
+
+// model User {
+//   id                String       @id
+//   fullName          String
+//   email             String       @unique
+//   password          String
+//   attendances       Attendance[]
+//   assignedLocations Location[] // Many-to-many relation to Location
+//   jobTitle          String // e.g., "Accountant"
+//   jobRole           String // e.g., "Financial Analyst"
+//   mobile            String?
+//   createdAt         DateTime     @default(now())
+//   updatedAt         DateTime     @updatedAt
+//   deletedAt         DateTime?
+//   Role              Role?        @relation(fields: [roleId], references: [id])
+//   roleId            String?
+
+//   @@index([fullName])
+//   @@index([email])
+// }
+
+// model Employee {
+//   id                String       @id
+//   // employeeId        String       @unique
+//   fullName          String
+//   email             String       @unique
+//   password          String
+//   role              Role         @relation(fields: [roleId], references: [id])
+//   roleId            String
+//   attendances       Attendance[]
+//   assignedLocations Location[]
+//   division          String?
+//   department        String?
+//   section           String?
+//   locationCategory  String
+//   location          String
+//   jobTitle          String
+//   jobRole           String
+//   mobile            String?
+//   createdAt         DateTime     @default(now())
+//   updatedAt         DateTime     @updatedAt
+//   deletedAt         DateTime?
+// }
+
+// model Location {
+//   id          String       @id @default(cuid())
+//   name        String // e.g., "Legahar-Head Quarter", "Head Office"
+//   latitude    Float // For geofencing
+//   longitude   Float // For geofencing
+//   radius      Float // Radius in meters for geofencing
+//   createdAt   DateTime     @default(now())
+//   updatedAt   DateTime     @updatedAt
+//   deletedAt   DateTime? // Soft delete
+//   employees   Employee[] // Users assigned to this location (many-to-many)
+//   attendances Attendance[] // Attendance records at this location
+//   User        User?        @relation(fields: [userId], references: [id])
+//   userId      String?
+// }
+
+// model Attendance {
+//   id         String    @id @default(cuid())
+//   userId     String
+//   locationId String
+//   checkIn    DateTime
+//   checkOut   DateTime?
+//   status     Status    @default(PRESENT)
+//   createdAt  DateTime  @default(now())
+//   updatedAt  DateTime  @updatedAt
+//   employee   Employee  @relation(fields: [userId], references: [id])
+//   location   Location  @relation(fields: [locationId], references: [id])
+//   User       User      @relation(fields: [userId], references: [id])
+
+//   @@index([userId, locationId, checkIn])
+// }
+
+// enum Status {
+//   EARLYLEAVE
+//   PRESENT
+//   LATE
+//   ABSENT
+//   AUTOCHECKOUT
+// }
+
+// model Role {
+//   id        String     @id @default(cuid())
+//   name      String     @unique
+//   abilities Ability[]
+//   users     User[]
+//   createdAt DateTime   @default(now())
+//   updatedAt DateTime   @updatedAt
+//   deletedAt DateTime?
+//   Employee  Employee[]
+
+//   @@index([name])
+// }
+
+// model Ability {
+//   id        String    @id @default(cuid())
+//   action    String[] // Example: "create", "read", "update", "delete" (single action per ability for simplicity)
+//   subject   String // Example: "Attendance", "Location"
+//   role      Role      @relation(fields: [roleId], references: [id])
+//   roleId    String
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+//   deletedAt DateTime?
+
+//   @@index([action, subject, roleId])
+// }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id               String    @id // Employee ID will be manually set (no @default(cuid()))
+  fullName         String
+  division         String?
+  department       String?
+  section          String?
+  locationCategory String
+  location         String
+  jobTitle         String
+  jobRole          String
+  mobile           String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  // One-to-one relation with User
+  user User?
+
+  // Relations with Location and Attendance
+  attendances       Attendance[]
+  assignedLocations Location[]   @relation("EmployeeLocations")
+  primaryLocation   Location?    @relation("EmployeePrimaryLocation", fields: [locationId], references: [id])
+  locationId        String?
+  Location          Location?
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // One-to-one relation with Employee
+  employeeId String?   @unique // Foreign key to Employee
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+}
+
+model Role {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  abilities Ability[]
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Ability {
+  id        String    @id @default(cuid())
+  action    String[]
+  subject   String
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String
+  latitude  Float
+  longitude Float
+  radius    Float // in meters
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations with Employee and Attendance
+  attendances       Attendance[]
+  assignedEmployees Employee[]   @relation("EmployeeLocations")
+  assignedEmployee  Employee?    @relation("LocationAssignedEmployee", fields: [employeeId], references: [id])
+  employeeId        String?      @unique
+  Employee          Employee[]
+}
+
+model Attendance {
+  id         String    @id @default(cuid())
+  employeeId String
+  locationId String
+  checkIn    DateTime
+  checkOut   DateTime?
+  status     Status    @default(PRESENT)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  employee Employee @relation(fields: [employeeId], references: [id])
+  location Location @relation(fields: [locationId], references: [id])
+}
+
+enum Status {
+  EARLYLEAVE
+  PRESENT
+  LATE
+  ABSENT
+  AUTOCHECKOUT
+}

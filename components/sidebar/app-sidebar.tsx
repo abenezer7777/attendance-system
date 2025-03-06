@@ -1,5 +1,12 @@
 "use client";
-import { Clock, Home, LayoutDashboard, LocateIcon, Users } from "lucide-react";
+import {
+  BuildingIcon,
+  Clock,
+  Home,
+  LayoutDashboard,
+  LocateIcon,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -34,11 +41,11 @@ const mainItems = [
   //   url: "/checkIn",
   //   icon: Home,
   // },
-  {
-    title: "Admin Dashboard",
-    url: "/admin",
-    icon: Users, // Using Users icon as a placeholder.  Replace with appropriate icon.
-  },
+  // {
+  //   title: "Admin Dashboard",
+  //   url: "/admin",
+  //   icon: Users, // Using Users icon as a placeholder.  Replace with appropriate icon.
+  // },
 ];
 
 const settingsItems = [
@@ -52,6 +59,13 @@ const settingsItems = [
     title: "Location",
     url: "/location",
     icon: LocateIcon,
+    // subject: "User",
+  },
+  {
+    title: "Organization",
+    url: "/organization",
+    icon: BuildingIcon,
+
     // subject: "User",
   },
 ];

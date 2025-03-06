@@ -1,4 +1,5 @@
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +12,8 @@ import AbilityProvider from "@/components/casl/AbilityProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AuthWatcher from "@/components/AuthWatcher";
+// import url("https://unpkg.com/leaflet/dist/leaflet.css");
+// app/layout.tsx
 
 const inter = Inter({
   subsets: ["latin"], // Specify the subset explicitly

@@ -37,7 +37,7 @@ export default function DashboardPage() {
             <TeamSwitcher
               onTeamChange={(team) => console.log("Team changed:", team)}
             />
-            <MainNav className="mx-6" />
+            {/* <MainNav className="mx-6" /> */}
             <div className="ml-auto flex items-center space-x-4">
               <Search />
               {/* <UserNav /> */}
@@ -50,19 +50,17 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-2">
               {/* <CalendarDateRangePicker />
               <Button>Download</Button> */}
-              <AttendanceExportButton />
+              {/* <AttendanceExportButton /> */}
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
+              {/* <TabsTrigger value="analytics">Analytics</TabsTrigger> */}
+              <TabsTrigger value="reports">Reports</TabsTrigger>
+              {/* <TabsTrigger value="notifications" disabled>
                 Notifications
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -188,6 +186,15 @@ export default function DashboardPage() {
                     <RecentSales />
                   </CardContent>
                 </Card>
+              </div>
+            </TabsContent>
+            <TabsContent value="reports" className="space-y-4">
+              <div className="flex items-center justify-between space-y-2">
+                <div className="flex items-center space-x-2">
+                  {/* <CalendarDateRangePicker />
+              <Button>Download</Button> */}
+                  <AttendanceExportButton />
+                </div>
               </div>
             </TabsContent>
           </Tabs>

@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 // import { authOptions } from "@/lib/authOptions";
 import { hash } from "bcryptjs";
 import { getUserSessionAndAbility } from "@/lib/authUtils";
-import { editUserSchema } from "@/schemas/validationSchema";
+import { createUserSchema } from "@/lib/schemas/validationSchema";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -21,29 +21,34 @@ export async function PATCH(
 
   const { ability } = await getUserSessionAndAbility();
 
-  // if (!ability.can("update", "User")) {
-  //   return NextResponse.json(
-  //     { error: "Forbidden: You do not have permission to update users" },
-  //     { status: 403 }
-  //   );
-  // }
+  if (!ability.can("update", "User")) {
+    return NextResponse.json(
+      { error: "Forbidden: You do not have permission to update users" },
+      { status: 403 }
+    );
+  }
 
   try {
     const { id } = params;
     const body = await req.json();
-    // const data = editUserSchema.parse(body);
+
+    // Validate the request body with the schema without password
+    const validatedData = createUserSchema.omit({ password: true }).parse(body);
+
     const {
       email,
       fullName,
-      password,
       roleName,
       employeeId,
-      location,
-      locationCategory,
-      jobRole,
+      organizationId,
       jobTitle,
-    } = body;
+      jobRole,
+      mobile,
+      supervisorId,
+      assignedLocationIds = [],
+    } = validatedData;
 
+    // Check if role exists
     const existingRole = await prisma.role.findUnique({
       where: { name: roleName },
     });
@@ -54,32 +59,61 @@ export async function PATCH(
         { status: 400 }
       );
     }
-    const userName = email.split("@");
-    const updatedData: any = {
+
+    // Check if organization exists
+    const existingOrg = await prisma.organization.findUnique({
+      where: { id: organizationId },
+    });
+
+    if (!existingOrg) {
+      return NextResponse.json(
+        { error: `Organization does not exist` },
+        { status: 400 }
+      );
+    }
+
+    // Prepare update data
+    const updateData = {
       email,
       fullName,
       roleId: existingRole.id,
       employeeId,
-      location,
-      locationCategory,
-      jobRole,
+      organizationId,
       jobTitle,
-      // username: userName[0],
+      jobRole,
+      mobile,
+      supervisorId: supervisorId || null,
+      assignedLocations: {
+        set: assignedLocationIds.map((locationId: string) => ({
+          id: locationId,
+        })),
+      },
     };
-    if (password) {
-      updatedData.password = await hash(password, 10);
-    }
 
+    // Update the user
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: updatedData,
+      data: updateData,
+      include: {
+        role: true,
+        organization: true,
+        assignedLocations: true,
+        supervisor: {
+          select: {
+            fullName: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ user: updatedUser });
+    return NextResponse.json({
+      success: true,
+      user: updatedUser,
+    });
   } catch (error: any) {
-    console.error("Error updating user:", error.message);
+    console.error("Error updating user:", error);
     return NextResponse.json(
-      { error: "Failed to update user" },
+      { error: error.message || "Failed to update user" },
       { status: 500 }
     );
   }
@@ -98,12 +132,12 @@ export async function DELETE(
 
   const { ability } = await getUserSessionAndAbility();
 
-  // if (!ability.can("delete", "User")) {
-  //   return NextResponse.json(
-  //     { error: "Forbidden: You do not have permission to delete users" },
-  //     { status: 403 }
-  //   );
-  // }
+  if (!ability.can("delete", "User")) {
+    return NextResponse.json(
+      { error: "Forbidden: You do not have permission to delete users" },
+      { status: 403 }
+    );
+  }
 
   try {
     const { id } = params;

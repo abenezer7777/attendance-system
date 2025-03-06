@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* @import url("https://unpkg.com/leaflet/dist/leaflet.css"); */
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -100,10 +101,23 @@
 .rounded-hexagon {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
+/* .command-input input {
+  pointer-events: auto !important;
+  user-select: text !important;
+} */
 
 @layer base {
   * {
     @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;

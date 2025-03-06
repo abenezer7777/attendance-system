@@ -83,7 +83,7 @@ export async function GET(req: Request) {
     if (filter !== "all") {
       switch (filter) {
         case "early":
-          whereClause.status = "EARLY_LEAVE";
+          whereClause.status = "EARLYLEAVE";
           break;
         case "late":
           whereClause.status = "LATE";
@@ -125,6 +125,27 @@ export async function GET(req: Request) {
     console.error("Fetch attendance error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+export async function DELETE(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json({ error: "User ID required" }, { status: 400 });
+  }
+
+  try {
+    // Delete all attendance records for the user
+    await prisma.attendance.deleteMany({
+      where: { userId: userId, user: {} },
+    });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete attendance records" },
       { status: 500 }
     );
   }

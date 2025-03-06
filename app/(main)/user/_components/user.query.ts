@@ -1,4 +1,4 @@
-import { createUserSchema } from "@/schemas/validationSchema";
+import { createUserSchema } from "@/lib/schemas/validationSchema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { z } from "zod";
@@ -26,10 +26,9 @@ export const useGetUsers = () => {
   });
 };
 
-const createUser = (createUserDto: CreateUserFormValues) => {
-  return axios
-    .post(`${baseUrl}/api/user`, createUserDto)
-    .then(({ data }) => data);
+const createUser = async (createUserDto: CreateUserFormValues) => {
+  const { data } = await axios.post(`${baseUrl}/api/user`, createUserDto);
+  return data;
 };
 export const useCreateUserMutation = () => {
   const queryClient = useQueryClient();
@@ -41,3 +40,23 @@ export const useCreateUserMutation = () => {
     },
   });
 };
+
+export function useGetSupervisors(
+  search: string = "",
+  page: number = 1,
+  limit: number = 10
+) {
+  return useQuery({
+    queryKey: ["supervisors", search, page],
+    queryFn: async () => {
+      const response = await axios.get(`/api/user/supervisors`, {
+        params: {
+          search,
+          page,
+          limit,
+        },
+      });
+      return response.data;
+    },
+  });
+}

@@ -12,7 +12,7 @@ import { DataTableViewOptions } from "@/app/(main)/user/_components/data-table-v
 import { useState } from "react";
 import { X } from "lucide-react";
 // import { OrgLevel } from "@prisma/client";
-import { levels, roleName } from "@/schemas/data/data";
+import { levels, roleName } from "@/lib/schemas/data/data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 // import { Modal } from "./AdvanceSearchModal";
 
@@ -31,19 +31,21 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter by Name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("fullName")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("fullName")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("role.name") && (
+        {/* {table.getColumn("role.id") && (
           <DataTableFacetedFilter
-            column={table.getColumn("role.name")}
+            column={table.getColumn("role.id")}
             title="Role"
             options={roleName}
           />
-        )}
+        )} */}
         {/* {table.getColumn("priority") && (
           <DataTableFacetedFilter
             column={table.getColumn("priority")}

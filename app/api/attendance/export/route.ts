@@ -44,7 +44,7 @@ export async function GET(req: Request) {
           select: {
             fullName: true,
             employeeId: true,
-            division: true,
+            // division: true,
             email: true,
           },
         },

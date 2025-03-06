@@ -9,23 +9,25 @@ datasource db {
 }
 
 model User {
-  id                String       @id @default(cuid())
-  employeeId        String       @unique
+  id                String        @id @default(cuid())
+  employeeId        String        @unique
   fullName          String
-  email             String       @unique
+  email             String        @unique
   password          String
-  role              Role         @relation(fields: [roleId], references: [id])
+  role              Role          @relation(fields: [roleId], references: [id])
   roleId            String
   attendances       Attendance[]
   assignedLocations Location[] // Many-to-many relation to Location
-  organization      Organization @relation(fields: [organizationId], references: [id])
-  organizationId    String // Foreign key to OrganizationUnit
+  organization      Organization  @relation(fields: [organizationId], references: [id])
+  organizationId    String // Foreign key to Organization
   jobTitle          String // e.g., "Accountant"
   jobRole           String // e.g., "Financial Analyst"
   mobile            String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  deletedAt         DateTime?
+  supervisedOrg     Organization? @relation("OrganizationSupervisor") // Supervisor relation to Organization
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@index([employeeId, email, organizationId])
 }
@@ -37,10 +39,14 @@ model Organization {
   parentId  String?
   parent    Organization?  @relation("ParentChild", fields: [parentId], references: [id])
   children  Organization[] @relation("ParentChild")
-  users     User[] // Users associated with this unit
+  users     User[] // Users associated with this organization
   locations Location[]     @relation("OrgLocation") // Many-to-many relation to Location
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+
+  supervisorId String? @unique // Supervisor user ID (must be unique for one-to-one relation)
+  supervisor   User?   @relation("OrganizationSupervisor", fields: [supervisorId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? // Optional soft delete field
 
   @@index([name, level])
