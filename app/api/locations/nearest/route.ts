@@ -15,9 +15,9 @@ export async function POST(req: Request) {
     const { latitude, longitude } = await req.json();
 
     // Get all locations assigned to the user
-    const userLocations = await prisma.location.findMany({
+    const userLocations = await prisma.building.findMany({
       where: {
-        users: {
+        employees: {
           some: {
             id: session.user.id as string,
           },
@@ -26,17 +26,17 @@ export async function POST(req: Request) {
     });
 
     // Find the first location that the user is within radius of
-    const validLocation = userLocations.find((location) =>
+    const validBuilding = userLocations.find((building) =>
       isWithinRadius(
         latitude,
         longitude,
-        location.latitude,
-        location.longitude,
-        location.radius
+        building.latitude,
+        building.longitude,
+        building.radius
       )
     );
 
-    return NextResponse.json({ location: validLocation || null });
+    return NextResponse.json({ building: validBuilding || null });
   } catch (error) {
     console.error("Nearest location error:", error);
     return NextResponse.json(

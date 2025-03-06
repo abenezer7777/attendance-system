@@ -1,4 +1,4 @@
-export interface Location {
+export interface Building {
   id: string;
   name: string;
   latitude: number;
@@ -8,16 +8,25 @@ export interface Location {
 
 export interface AttendanceRecord {
   id: string;
+  // employeeid:string
   checkIn: Date;
   checkOut?: Date;
   status: "PRESENT" | "LATE" | "ABSENT" | "AUTOCHECKOUT";
-  location: Location;
+  building: Building;
 }
+export type Ability = {
+  subject: string;
+  action: string;
+};
 
-export interface User {
-  // id: string;
-  fullname: string;
-  email: string;
-  role: string;
-  roleId: string;
-}
+export type Role = {
+  name: string;
+  abilities: Ability[];
+};
+// export interface User {
+//   // id: string;
+//   fullname: string;
+//   email: string;
+//   role: string;
+//   roleId: string;
+// }

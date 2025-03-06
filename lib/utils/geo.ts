@@ -21,10 +21,15 @@ export function calculateDistance(
 export function isWithinRadius(
   userLat: number,
   userLon: number,
-  locationLat: number,
-  locationLon: number,
+  buildingLat: number,
+  buildingLon: number,
   radius: number
 ): boolean {
-  const distance = calculateDistance(userLat, userLon, locationLat, locationLon);
+  const distance = calculateDistance(
+    userLat,
+    userLon,
+    buildingLat,
+    buildingLon
+  );
   return distance <= radius;
 }

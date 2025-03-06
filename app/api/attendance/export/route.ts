@@ -40,10 +40,10 @@ export async function GET(req: Request) {
     const records = await prisma.attendance.findMany({
       where,
       include: {
-        user: {
+        employee: {
           select: {
             fullName: true,
-            employeeId: true,
+            id: true,
             // division: true,
             email: true,
           },

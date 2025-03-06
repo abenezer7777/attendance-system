@@ -159,7 +159,7 @@ export async function POST(req: Request) {
     const userData = parsed.data;
 
     const {
-      employeeId,
+      id,
       email,
       fullName,
       password,
@@ -172,7 +172,7 @@ export async function POST(req: Request) {
     } = userData;
 
     // Check for duplicate email
-    const existingUserByEmail = await prisma.user.findUnique({
+    const existingUserByEmail = await prisma.employee.findUnique({
       where: { email },
     });
     if (existingUserByEmail) {
@@ -183,12 +183,12 @@ export async function POST(req: Request) {
     }
 
     // Check for duplicate employeeId
-    const existingUserByEmployeeId = await prisma.user.findUnique({
-      where: { employeeId },
+    const existingUserByEmployeeId = await prisma.employee.findUnique({
+      where: { id },
     });
     if (existingUserByEmployeeId) {
       return NextResponse.json(
-        { error: `User with employeeId ${employeeId} already exists` },
+        { error: `User with employeeId ${id} already exists` },
         { status: 400 }
       );
     }
@@ -205,32 +205,32 @@ export async function POST(req: Request) {
     }
 
     // Validate that the organization exists
-    const existingOrg = await prisma.organization.findUnique({
-      where: { id: organizationId },
-    });
-    if (!existingOrg) {
-      return NextResponse.json(
-        { error: `Organization with ID '${organizationId}' not found` },
-        { status: 400 }
-      );
-    }
+    // const existingOrg = await prisma.organization.findUnique({
+    //   where: { id: organizationId },
+    // });
+    // if (!existingOrg) {
+    //   return NextResponse.json(
+    //     { error: `Organization with ID '${organizationId}' not found` },
+    //     { status: 400 }
+    //   );
+    // }
 
     const hashedPassword = await hash(password, 10);
 
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.employee.create({
       data: {
-        employeeId,
+        id,
         email,
         fullName,
-        password: hashedPassword,
-        roleId: existingRole.id,
-        organizationId,
+        // password: hashedPassword,
+        // roleId: existingRole.id,
+        // organizationId,
         jobTitle,
         jobRole,
-        mobile,
-        assignedLocations: {
-          connect: assignedLocationIds?.map((id: string) => ({ id })) || [],
-        },
+        // mobile,
+        // assignedLocations: {
+        //   connect: assignedLocationIds?.map((id: string) => ({ id })) || [],
+        // },
       },
     });
 
@@ -243,11 +243,11 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const users = await prisma.user.findMany({
+    const users = await prisma.employee.findMany({
       include: {
-        role: { include: { abilities: true } },
-        organization: true,
-        assignedLocations: true,
+        roles: { include: { abilities: true } },
+        // organization: true,
+        buildings: true,
       },
       orderBy: { createdAt: "desc" },
     });

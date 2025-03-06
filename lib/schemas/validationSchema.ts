@@ -45,8 +45,8 @@ export const createOrganizationSchema = z.object({
 //   password: z.string().min(1, "Password is required"),
 // });
 export const createUserSchema = z.object({
-  id: z.string().optional(),
-  employeeId: z
+  // id: z.string().optional(),
+  id: z
     .string()
     .min(1, "Employee number is required")
     .regex(/^\d+$/, "Employee number must be a valid number"),

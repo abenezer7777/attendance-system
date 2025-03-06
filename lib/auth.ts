@@ -5,7 +5,6 @@ import { compare } from "bcryptjs";
 import LdapClient from "ldapjs-client";
 import { FormField } from "@/components/ui/form";
 import { LoginSchema } from "./schemas/validationSchema";
-import { z } from "zod";
 
 const ldapClient = new LdapClient({ url: "ldap://172.22.186.7" });
 
@@ -18,69 +17,70 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Credentials",
       credentials: {
         email: {},
         password: {},
       },
       async authorize(credentials) {
-        try {
-          const { email, password } = await LoginSchema.parseAsync(credentials);
-          const [username] = email.split("@");
+        const { email, password } = await LoginSchema.parseAsync(credentials);
+        const [username] = email.split("@");
 
-          const domain = "ethio.local";
-          const dn = `${username}@${domain}`;
-          // await ldapClient.bind(dn, password);
+        const domain = "ethio.local";
+        const dn = `${username}@${domain}`;
+        // await ldapClient.bind(dn, password);
 
-          const user = await prisma.user.findUnique({
-            where: { email: email },
-            include: {
-              role: {
-                include: {
-                  abilities: true,
-                },
+        const user = await prisma.employee.findUnique({
+          where: { email: email },
+          include: {
+            roles: {
+              include: {
+                abilities: true,
               },
             },
-          });
+          },
+        });
 
-          if (!user) {
-            return null;
-          }
-
-          // const isPasswordValid = await compare(credentials.password, user.password);
-
-          // if (!isPasswordValid) {
-          //   return null;
-          // }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.fullName,
-            role: user.role,
-          };
-        } catch (error) {
-          throw new Error("Invalid credentials.");
+        if (!user) {
+          return null;
         }
+
+        // const isPasswordValid = await compare(credentials.password, user.password);
+
+        // if (!isPasswordValid) {
+        //   return null;
+        // }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.fullName,
+          // role: user.roles,
+          role: {
+            id: user.roles[0].id,
+            name: user.roles[0].name,
+          },
+        };
       },
     }),
   ],
   pages: {
     signIn: "/login",
   },
+
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = user.role; // user.role is { id: string; name: string }
       }
       return token;
     },
     session: async ({ session, token }) => {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
+      session.user = {
+        ...session.user,
+        id: token.id as string,
+        role: token.role as { id: string; name: string }, // Cast token.role to the expected type
+      };
       return session;
     },
   },

@@ -60,7 +60,7 @@ export async function GET(req: Request) {
       prisma.attendance.count({
         where: {
           ...baseFilter,
-          status: "EARLYLEAVE",
+          status: "EARLY_LEAVE",
         },
       }),
       prisma.attendance.count({

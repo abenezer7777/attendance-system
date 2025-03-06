@@ -18,13 +18,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { locationId, latitude, longitude, type } = await req.json();
+    const { buildingId, latitude, longitude, type } = await req.json();
 
     // Check for open check-ins at the same location if user is trying to check in
     if (type === "check-in") {
       const hasOpen = await hasOpenCheckIn(
         session.user.id as string,
-        locationId
+        buildingId
       );
       if (hasOpen) {
         return NextResponse.json(
@@ -38,8 +38,8 @@ export async function POST(req: Request) {
     }
 
     const attendance = await handleAttendance({
-      userId: session.user.id as string,
-      locationId,
+      employeeId: session.user.id as string,
+      buildingId,
       latitude,
       longitude,
       type,
@@ -72,7 +72,7 @@ export async function GET(req: Request) {
     const endDate = searchParams.get("endDate");
 
     const whereClause: any = {
-      userId: session.user.id as string,
+      employeeId: session.user.id as string,
       checkIn: {
         gte: startDate ? new Date(startDate) : undefined,
         lte: endDate ? new Date(endDate) : undefined,
@@ -83,7 +83,7 @@ export async function GET(req: Request) {
     if (filter !== "all") {
       switch (filter) {
         case "early":
-          whereClause.status = "EARLYLEAVE";
+          whereClause.status = "EARLY_LEAVE";
           break;
         case "late":
           whereClause.status = "LATE";
@@ -95,7 +95,7 @@ export async function GET(req: Request) {
           whereClause.status = "PRESENT";
           break;
         case "autocheckout":
-          whereClause.status = "AUTOCHECKOUT";
+          whereClause.status = "AUTOCHE_CKOUT";
           break;
       }
     }
@@ -103,7 +103,7 @@ export async function GET(req: Request) {
     const [records, total] = await Promise.all([
       prisma.attendance.findMany({
         where: whereClause,
-        include: { location: true },
+        include: { building: true },
         orderBy: { checkIn: "desc" },
         skip: (page - 1) * limit,
         take: limit,
@@ -131,16 +131,16 @@ export async function GET(req: Request) {
 }
 export async function DELETE(req: Request) {
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+  const employeeId = searchParams.get("employeeId");
 
-  if (!userId) {
+  if (!employeeId) {
     return NextResponse.json({ error: "User ID required" }, { status: 400 });
   }
 
   try {
     // Delete all attendance records for the user
     await prisma.attendance.deleteMany({
-      where: { userId: userId, user: {} },
+      where: { employeeId: employeeId, employee: {} },
     });
     return NextResponse.json({ success: true });
   } catch (error) {

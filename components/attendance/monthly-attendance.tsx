@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-async function fetchMonthlyAttendance(userId?: string) {
+async function fetchMonthlyAttendance(employeeId?: string) {
   // Create the URL and append the userId parameter if provided.
   const url = new URL("/api/attendance/monthly", window.location.origin);
-  if (userId) {
-    url.searchParams.append("userId", userId);
+  if (employeeId) {
+    url.searchParams.append("employeeId", employeeId);
   }
   const response = await fetch(url.toString());
   if (!response.ok) throw new Error("Failed to fetch monthly attendance");
@@ -23,13 +23,13 @@ async function fetchMonthlyAttendance(userId?: string) {
 
 type MonthlyAttendanceProps = {
   // Optional userId prop: if provided, the API returns data for that user.
-  userId?: string;
+  employeeId?: string;
 };
 
-export function MonthlyAttendance({ userId }: MonthlyAttendanceProps) {
+export function MonthlyAttendance({ employeeId }: MonthlyAttendanceProps) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["monthlyAttendance", userId],
-    queryFn: () => fetchMonthlyAttendance(userId),
+    queryKey: ["monthlyAttendance", employeeId],
+    queryFn: () => fetchMonthlyAttendance(employeeId),
   });
 
   if (isLoading) return <div>Loading...</div>;

@@ -112,7 +112,7 @@ async function seedUsers() {
         : null;
 
       try {
-        await prisma.user.upsert({
+        await prisma.employee.upsert({
           where: { employeeId: record.employeeId },
           update: {
             fullName: record.fullName,

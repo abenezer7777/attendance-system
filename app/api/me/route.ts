@@ -12,12 +12,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
   try {
-    const currentUser = await prisma.user.findUnique({
+    const currentUser = await prisma.employee.findUnique({
       where: {
         email: session.user.email, // Guaranteed to be defined at this point
       },
       include: {
-        role: {
+        roles: {
           include: {
             abilities: true,
           },

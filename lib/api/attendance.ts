@@ -2,34 +2,34 @@ import { prisma } from "@/lib/prisma";
 import { isWithinRadius } from "@/lib/utils/geo";
 
 interface AttendanceParams {
-  userId: string;
-  locationId: string;
+  employeeId: string;
+  buildingId: string;
   latitude: number;
   longitude: number;
   type: "check-in" | "check-out";
 }
 
 export async function handleAttendance({
-  userId,
-  locationId,
+  employeeId,
+  buildingId,
   latitude,
   longitude,
   type,
 }: AttendanceParams) {
-  const location = await prisma.location.findUnique({
-    where: { id: locationId },
+  const building = await prisma.building.findUnique({
+    where: { id: buildingId },
   });
 
-  if (!location) {
+  if (!building) {
     throw new Error("Location not found");
   }
 
   const withinRadius = isWithinRadius(
     latitude,
     longitude,
-    location.latitude,
-    location.longitude,
-    location.radius
+    building.latitude,
+    building.longitude,
+    building.radius
   );
 
   if (!withinRadius) {
@@ -39,18 +39,18 @@ export async function handleAttendance({
   if (type === "check-in") {
     return prisma.attendance.create({
       data: {
-        userId,
-        locationId,
+        employeeId,
+        buildingId,
         checkIn: new Date(),
-        status: "PRESENT",
+        status: "CHECKED_IN",
       },
     });
   }
 
   const attendance = await prisma.attendance.findFirst({
     where: {
-      userId,
-      locationId,
+      employeeId,
+      buildingId,
       checkOut: null,
     },
     orderBy: {
@@ -69,7 +69,7 @@ export async function handleAttendance({
 }
 
 export async function getAttendanceRecords(
-  userId: string,
+  employeeId: string,
   page: number = 1,
   limit: number = 10
 ) {
@@ -77,14 +77,14 @@ export async function getAttendanceRecords(
 
   const [records, total] = await Promise.all([
     prisma.attendance.findMany({
-      where: { userId },
-      include: { location: true },
+      where: { employeeId },
+      include: { building: true },
       orderBy: { checkIn: "desc" },
       skip,
       take: limit,
     }),
     prisma.attendance.count({
-      where: { userId },
+      where: { employeeId },
     }),
   ]);
 
@@ -99,13 +99,13 @@ export async function getAttendanceRecords(
 }
 
 export async function hasOpenCheckIn(
-  userId: string,
-  locationId: string
+  employeeId: string,
+  buildingId: string
 ): Promise<boolean> {
   const openCheckIn = await prisma.attendance.findFirst({
     where: {
-      userId: userId,
-      locationId: locationId,
+      employeeId: employeeId,
+      buildingId: buildingId,
       checkOut: null,
     },
   });

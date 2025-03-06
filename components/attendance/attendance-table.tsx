@@ -67,7 +67,7 @@ export function AttendanceTable() {
         return "bg-yellow-500/10 text-yellow-500";
       case "ABSENT":
         return "bg-red-500/10 text-red-500";
-      case "AUTOCHECKOUT":
+      case "AUTO_CHECKOUT":
         return "bg-blue-500/10 text-blue-500";
       default:
         return "bg-gray-500/10 text-gray-500";

@@ -1,26 +1,9 @@
 import "next-auth";
-export type Ability = {
-  subject: string;
-  action: string;
-};
-
-export type Role = {
-  name: string;
-  abilities: Ability[];
-};
+import { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
-    user: {
-      id: string;
-      email: string;
-      name: string;
-      role: {
-        id: string;
-        name: string;
-        // include any other properties you need...
-      };
-    };
+    user: User & DefaultSession["user"];
   }
 
   interface User {
@@ -28,15 +11,8 @@ declare module "next-auth" {
     email: string;
     name: string;
     role: {
-      abilities: {
-        action: string[];
-        id: string;
-        roleId: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        subject: string;
-      }[];
+      id: string;
+      name: string;
     };
   }
 }

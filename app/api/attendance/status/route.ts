@@ -27,14 +27,14 @@ export async function GET(req: Request) {
 
     const todayRecords = await prisma.attendance.findMany({
       where: {
-        userId: session.user.id as string,
+        employeeId: session.user.id as string,
         // locationId: locationId,
         checkIn: {
           gte: today,
         },
       },
       include: {
-        location: true,
+        building: true,
       },
       orderBy: {
         checkIn: "asc",
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       hasActiveCheckIn: !!activeAttendance,
-      activeLocation: activeAttendance?.location || null,
+      activeLocation: activeAttendance?.building || null,
       firstRecord: firstRecord ? firstRecord.toISOString() : null,
       lastRecord: lastCheckOut ? lastCheckOut.toISOString() : null,
       totalHours,

@@ -44,7 +44,7 @@ export function AttendanceList() {
           {data.data.map((record: AttendanceRecord) => (
             <TableRow key={record.id}>
               <TableCell>{format(new Date(record.checkIn), "PP")}</TableCell>
-              <TableCell>{record.location.name}</TableCell>
+              <TableCell>{record.building.name}</TableCell>
               <TableCell>{format(new Date(record.checkIn), "pp")}</TableCell>
               <TableCell>
                 {record.checkOut

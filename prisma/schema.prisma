@@ -35,15 +35,16 @@ model Employee {
 }
 
 model Building {
-  id        String     @id @default(cuid())
-  name      String // e.g., "Legahar-Head Quarter", "Head Office"
-  latitude  Float // For geofencing
-  longitude Float // For geofencing
-  radius    Float // Radius in meters for geofencing
-  employees Employee[] // Users assigned to this location (many-to-many)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  deletedAt DateTime? // Soft delete
+  id          String       @id @default(cuid())
+  name        String // e.g., "Legahar-Head Quarter", "Head Office"
+  latitude    Float // For geofencing
+  longitude   Float // For geofencing
+  radius      Float // Radius in meters for geofencing
+  employees   Employee[] // Users assigned to this location (many-to-many)
+  attendances Attendance[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime? // Soft delete
 
   @@index([name])
 }
@@ -55,8 +56,11 @@ model Attendance {
   status     Status    @default(CHECKED_IN)
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  building   Building  @relation(fields: [buildingId], references: [id])
+  buildingId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
 }

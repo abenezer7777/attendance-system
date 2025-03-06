@@ -21,7 +21,7 @@ export async function POST() {
         where: { id: record.id },
         data: {
           checkOut: new Date(),
-          status: "AUTOCHECKOUT",
+          status: "AUTO_CHECKOUT",
         },
       })
     );

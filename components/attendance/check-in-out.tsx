@@ -5,15 +5,15 @@ import { useState } from "react";
 import { useGeolocation } from "@/lib/hooks/use-geolocation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Location } from "@/lib/types";
+import { Building } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface CheckInOutProps {
-  locations: Location[];
+  building: Building[];
 }
 
-export function CheckInOut({ locations }: CheckInOutProps) {
+export function CheckInOut({ building }: CheckInOutProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const queryClient = useQueryClient();
@@ -88,20 +88,20 @@ export function CheckInOut({ locations }: CheckInOutProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {locations.map((location) => (
-        <Card key={location.id}>
+      {building.map((build) => (
+        <Card key={build.id}>
           <CardHeader>
-            <CardTitle>{location.name}</CardTitle>
+            <CardTitle>{build.name}</CardTitle>
           </CardHeader>
           <CardContent className="flex gap-2">
             <Button
-              onClick={() => handleAttendance("check-in", location.id)}
+              onClick={() => handleAttendance("check-in", build.id)}
               disabled={isLoading}
             >
               Check In
             </Button>
             <Button
-              onClick={() => handleAttendance("check-out", location.id)}
+              onClick={() => handleAttendance("check-out", build.id)}
               disabled={isLoading}
               variant="outline"
             >

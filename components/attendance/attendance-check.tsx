@@ -39,7 +39,7 @@ export function AttendanceCheck() {
   const { data: session, status } = useSession();
   const [isChecking, setIsChecking] = useState(false);
   const [hasActiveCheckIn, setHasActiveCheckIn] = useState(false);
-  const [locationName, setLocationName] = useState("");
+  const [buildingName, setbuildingName] = useState("");
   const [firstRecord, setFirstRecord] = useState("--:--");
   const [lastRecord, setLastRecord] = useState("--:--");
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -75,10 +75,10 @@ export function AttendanceCheck() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude }),
       });
-      const { location } = await response.json();
-      if (location) {
-        setCurrentLocationId(location.id);
-        await checkActiveStatus(location.id);
+      const { building } = await response.json();
+      if (building) {
+        setCurrentLocationId(building.id);
+        await checkActiveStatus(building.id);
         setIsValidLocation(true);
       } else {
         setIsValidLocation(false);
@@ -99,14 +99,14 @@ export function AttendanceCheck() {
     });
   };
 
-  const checkActiveStatus = async (locationId: string) => {
+  const checkActiveStatus = async (buildingId: string) => {
     try {
       const response = await fetch(
-        `/api/attendance/status?locationId=${locationId}`
+        `/api/attendance/status?locationId=${buildingId}`
       );
       const data = await response.json();
       setHasActiveCheckIn(data.hasActiveCheckIn);
-      setLocationName(data.activeLocation?.name || "");
+      setbuildingName(data.activeLocation?.name || "");
       setFirstRecord(formatTime(data.firstRecord));
       setLastRecord(formatTime(data.lastRecord));
       setTotalHours(data.totalHours || "--:--");
@@ -128,13 +128,13 @@ export function AttendanceCheck() {
     setIsChecking(true);
     try {
       // Find the nearest valid location
-      const locationsResponse = await fetch("/api/locations/nearest", {
+      const buildingResponse = await fetch("/api/locations/nearest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude }),
       });
 
-      const { location } = await locationsResponse.json();
+      const { building } = await buildingResponse.json();
 
       if (!location) {
         throw new Error("No valid location found nearby");
@@ -144,7 +144,7 @@ export function AttendanceCheck() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          locationId: location.id,
+          buildingId: building.id,
           latitude,
           longitude,
           type: hasActiveCheckIn ? "check-out" : "check-in",
@@ -157,7 +157,7 @@ export function AttendanceCheck() {
       }
 
       // Update status for this location
-      await checkActiveStatus(location.id);
+      await checkActiveStatus(building.id);
       await queryClient.invalidateQueries({ queryKey: ["attendance"] });
 
       toast({
@@ -194,7 +194,7 @@ export function AttendanceCheck() {
             <CardDescription>
               {format(currentTime, "MMMM dd, yyyy - EEEE")}
             </CardDescription>
-            <CardDescription>{locationName}</CardDescription>
+            <CardDescription>{buildingName}</CardDescription>
             {/* <div className="flex flex-col items-center">
             <h2 className="text-3xl font-bold">
               {format(currentTime, "hh:mm a")}
@@ -327,7 +327,7 @@ export function AttendanceCheck() {
           </CardContent>
         </Card>
         <div className="">
-          <MonthlyAttendance userId={session?.user.id} />
+          <MonthlyAttendance employeeId={session?.user.id} />
         </div>
       </div>
     </>

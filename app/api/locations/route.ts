@@ -124,9 +124,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const locations = await prisma.location.findMany({
+    const locations = await prisma.building.findMany({
       where: {
-        users: {
+        employees: {
           some: {
             id: session.user.id as string,
           },
@@ -162,7 +162,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const location = await prisma.location.create({
+    const location = await prisma.building.create({
       data: {
         ...validation.data,
         // Connect the current user so that the GET query returns this location
