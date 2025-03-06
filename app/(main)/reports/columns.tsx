@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { format } from "date-fns"
-import { Badge } from "@/components/ui/badge"
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 export type Report = {
-  id: string
-  employeeId: string
-  fullName: string
-  checkIn: string
-  checkOut: string | null
-  location: string
-  locationCategory: string
-  organization: string
-  status: 'EARLYLEAVE' | 'PRESENT' | 'LATE' | 'ABSENT' | 'AUTOCHECKOUT'
-}
+  id: string;
+  employeeId: string;
+  fullName: string;
+  checkIn: string;
+  checkOut: string | null;
+  location: string;
+  locationCategory: string;
+  organization: string;
+  status: "EARLYLEAVE" | "PRESENT" | "LATE" | "ABSENT" | "AUTOCHECKOUT";
+};
 
 export const columns: ColumnDef<Report>[] = [
   {
@@ -38,8 +38,10 @@ export const columns: ColumnDef<Report>[] = [
     accessorKey: "checkOut",
     header: "Check Out",
     cell: ({ row }) => {
-      const value = row.getValue("checkOut")
-      return value ? format(new Date(value), "PPp") : "-"
+      const checkOutValue = row.getValue("checkOut");
+      return checkOutValue
+        ? format(new Date(checkOutValue as string), "PPp")
+        : "-";
     },
   },
   {
@@ -58,20 +60,19 @@ export const columns: ColumnDef<Report>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
-      const variant = {
-        PRESENT: "success",
-        LATE: "warning",
-        ABSENT: "destructive",
-        EARLYLEAVE: "warning",
-        AUTOCHECKOUT: "default",
-      }[status] || "default"
+      const status = row.getValue("status") as string;
+      const variant =
+        {
+          PRESENT: "success",
+          LATE: "warning",
+          ABSENT: "destructive",
+          EARLYLEAVE: "warning",
+          AUTOCHECKOUT: "default",
+        }[status] || "default";
 
       return (
-        <Badge variant={variant as any}>
-          {status.replace(/_/g, ' ')}
-        </Badge>
-      )
+        <Badge variant={variant as any}>{status.replace(/_/g, " ")}</Badge>
+      );
     },
   },
-]
+];
