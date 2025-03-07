@@ -39,7 +39,7 @@ import {
   useGetLocations,
   useGetLocationsOnOrgnization,
 } from "@/app/(main)/location/loc.query";
-import { useGetAllOrganizationsForTable } from "@/app/(main)/organization/org.query";
+// import { useGetAllOrganizationsForTable } from "@/app/(main)/organization/org.query";
 import { useTheme } from "next-themes";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -79,7 +79,7 @@ export function CreateUserForm() {
   const form = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
-      employeeId: "",
+      id: "",
       email: "",
       fullName: "",
       password: "",
@@ -94,7 +94,7 @@ export function CreateUserForm() {
   });
 
   const { data: roles } = useGetRoles();
-  const { data: organizations } = useGetAllOrganizationsForTable();
+  // const { data: organizations } = useGetAllOrganizationsForTable();
   // const { data: locations } = useGetLocationsOnOrgnization(
   //   form.watch("organizationId")
   // );
@@ -140,7 +140,7 @@ export function CreateUserForm() {
             <div className="grid sm:grid-cols-2 gap-6">
               {/* Employee ID */}
               <FormField
-                name="employeeId"
+                name="id"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
@@ -240,7 +240,7 @@ export function CreateUserForm() {
               />
 
               {/* Organization */}
-              <FormField
+              {/* <FormField
                 name="organizationId"
                 control={form.control}
                 render={({ field }) => (
@@ -266,7 +266,7 @@ export function CreateUserForm() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               {/* Supervisor */}
               <FormField

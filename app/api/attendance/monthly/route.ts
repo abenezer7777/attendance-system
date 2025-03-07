@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     }
 
     const url = new URL(req.url);
-    const queryUserId = url.searchParams.get("userId");
+    const queryEmployeeId = url.searchParams.get("employeeId");
 
     // Determine if the logged-in user is an admin.
     const isAdmin =
@@ -40,11 +40,11 @@ export async function GET(req: Request) {
 
     if (!isAdmin) {
       // For non-admin users, always filter by their own ID.
-      baseFilter.userId = session.user.id;
+      baseFilter.employeeId = session.user.id;
     } else {
       // For admins, if a userId is provided in the query, use it.
-      if (queryUserId) {
-        baseFilter.userId = queryUserId;
+      if (queryEmployeeId) {
+        baseFilter.employeeId = queryEmployeeId;
       }
       // Otherwise, leave it out to get aggregated data for all employees.
     }

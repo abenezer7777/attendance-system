@@ -14,16 +14,16 @@ export const useGetLocations = () => {
   });
 };
 
-const getLocationsOnOrgnization = async (organizationId: string) => {
-  const { data } = await axios.get(
-    `${baseUrl}/api/locations?organizationId=${organizationId}`
-  );
-  return data;
-};
+// const getLocationsOnOrgnization = async (organizationId: string) => {
+//   const { data } = await axios.get(
+//     `${baseUrl}/api/locations?organizationId=${organizationId}`
+//   );
+//   return data;
+// };
 
-export const useGetLocationsOnOrgnization = (organizationId: string) => {
-  return useQuery({
-    queryKey: ["locations", organizationId],
-    queryFn: () => getLocationsOnOrgnization(organizationId),
-  });
-};
+// export const useGetLocationsOnOrgnization = (organizationId: string) => {
+//   return useQuery({
+//     queryKey: ["locations", organizationId],
+//     queryFn: () => getLocationsOnOrgnization(organizationId),
+//   });
+// };

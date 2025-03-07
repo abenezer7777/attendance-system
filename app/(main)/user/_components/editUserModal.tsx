@@ -28,7 +28,7 @@ import { editUserSchema } from "@/lib/schemas/validationSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useGetRoles, useGetSupervisors } from "./user.query";
-import { useGetAllOrganizationsForTable } from "@/app/(main)/organization/org.query";
+// import { useGetAllOrganizationsForTable } from "@/app/(main)/organization/org.query";
 import { useGetLocations } from "@/app/(main)/location/loc.query";
 import { useGetUsers } from "./user.query";
 import {
@@ -72,7 +72,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
   const queryClient = useQueryClient();
   const [isSubmitting, setSubmitting] = useState(false);
   const { data: roles } = useGetRoles();
-  const { data: organizations } = useGetAllOrganizationsForTable();
+  // const { data: organizations } = useGetAllOrganizationsForTable();
   const { data: locations } = useGetLocations();
   const { data: users } = useGetUsers();
 
@@ -230,7 +230,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="organizationId"
                 render={({ field }) => (
@@ -253,7 +253,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

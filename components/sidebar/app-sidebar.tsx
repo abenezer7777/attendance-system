@@ -4,6 +4,7 @@ import {
   Clock,
   Home,
   LayoutDashboard,
+  List,
   LocateIcon,
   Users,
 } from "lucide-react";
@@ -35,6 +36,11 @@ const mainItems = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: List,
   },
   // {
   //   title: "attendance2",
