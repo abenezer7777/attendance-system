@@ -18,12 +18,17 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { EyeIcon, EyeOffIcon, Lock, MailIcon } from "lucide-react";
+import { useState } from "react";
+import { useTheme } from "next-themes";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
   const { toast } = useToast();
+  const { theme } = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -101,7 +106,30 @@ export function LoginForm({
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500  " />
+                    <Input
+                      {...field}
+                      placeholder="********"
+                      type={showPassword ? "text" : "password"} // Toggle visibility
+                      className={` py-4 px-12 rounded-sm shadow-xl ${
+                        theme === "dark"
+                          ? "text-white bg-black"
+                          : "bg-white text-black"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

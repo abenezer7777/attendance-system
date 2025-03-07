@@ -22,11 +22,11 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden bg-zinc-200 lg:block">
         <img
-          src="/banner.jpeg"
+          src="/banner5.jpeg"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-fit dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"
           // width={}
         />
       </div>
