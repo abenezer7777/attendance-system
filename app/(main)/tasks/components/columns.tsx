@@ -1,48 +1,69 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+
+import { statuses } from "@/lib/schemas/data/data";
+import { Report } from "@/lib/schemas/validationSchema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-
-export type Report = {
-  id: string;
-  employeeId: string;
-  fullName: string;
-  checkIn: string;
-  checkOut: string | null;
-  location: string;
-  locationCategory: string;
-  building: string;
-  division: string | null;
-  department: string | null;
-  section: string | null;
-  status:
-    | "CHECKED_IN"
-    | "EARLY_LEAVE"
-    | "PRESENT"
-    | "LATE"
-    | "ABSENT"
-    | "AUTO_CHECKOUT";
-};
+import { format } from "date-fns";
 
 export const columns: ColumnDef<Report>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-[2px]"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-[2px]"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "employeeId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Employee ID" />
+      <DataTableColumnHeader column={column} title="EmployeeId" />
     ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("employeeId")}</div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "fullName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Full Name" />
     ),
-    filterFn: (row, id, value) => {
-      const val = row.getValue(id) as string;
-      return val.toLowerCase().includes((value as string).toLowerCase());
-    },
+    // cell: ({ row }) => {
+    //   const label = labels.find((label) => label.value === row.original.label);
+
+    //   return (
+    //     <div className="flex space-x-2">
+    //       {label && <Badge variant="outline">{label.label}</Badge>}
+    //       <span className="max-w-[500px] truncate font-medium">
+    //         {row.getValue("title")}
+    //       </span>
+    //     </div>
+    //   );
+    // },
   },
   {
     accessorKey: "division",
@@ -62,6 +83,7 @@ export const columns: ColumnDef<Report>[] = [
       <DataTableColumnHeader column={column} title="Section" />
     ),
   },
+
   {
     accessorKey: "checkIn",
     header: ({ column }) => (
@@ -112,25 +134,28 @@ export const columns: ColumnDef<Report>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const variant =
-        {
-          PRESENT: "success",
-          LATE: "warning",
-          ABSENT: "destructive",
-          EARLY_LEAVE: "warning",
-          AUTO_CHECKOUT: "default",
-          CHECKED_IN: "info",
-        }[status] || "default";
+      const status = statuses.find(
+        (status) => status.value === row.getValue("status")
+      );
+
+      if (!status) {
+        return null;
+      }
 
       return (
-        <Badge variant={variant as any}>{status.replace(/_/g, " ")}</Badge>
+        <div className="flex w-[100px] items-center">
+          {status.icon && (
+            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )}
+          <span>{status.label}</span>
+        </div>
       );
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
   },
+
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

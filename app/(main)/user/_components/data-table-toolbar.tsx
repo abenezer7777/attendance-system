@@ -12,8 +12,8 @@ import { DataTableViewOptions } from "@/app/(main)/user/_components/data-table-v
 import { useState } from "react";
 import { X } from "lucide-react";
 // import { OrgLevel } from "@prisma/client";
-import { levels, roleName } from "@/lib/schemas/data/data";
-import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+// import { levels, roleName } from "@/lib/schemas/data/data";
+// import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 // import { Modal } from "./AdvanceSearchModal";
 
 interface DataTableToolbarProps<TData> {

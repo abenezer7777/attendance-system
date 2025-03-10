@@ -32,6 +32,9 @@ model Employee {
 
   @@index([fullName])
   @@index([email])
+  @@index([division])
+  @@index([department])
+  @@index([section])
 }
 
 model Building {
@@ -63,6 +66,9 @@ model Attendance {
   updatedAt DateTime @updatedAt
 
   @@index([status])
+  @@index([checkIn])
+  @@index([buildingId])
+  @@index([employeeId])
 }
 
 enum Status {

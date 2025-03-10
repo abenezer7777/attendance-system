@@ -5,7 +5,7 @@ import { useGetUsers } from "@/app/(main)/user/_components/user.query";
 // import { OrgForm } from "./OrgForm";
 import { DataTable } from "@/app/(main)/user/_components/data-table";
 import { columns } from "@/app/(main)/user/_components/columns";
-import { CreateUserForm } from "./_components/createUserForm";
+// import { CreateUserForm } from "./_components/createUserForm";
 import { useSession } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ const userPage = () => {
   const { data: session, status } = useSession(); // session hook
   const router = useRouter();
   const { data: user = [], isLoading: usersLoading } = useGetUsers(); // always call this hook
-  console.log("session from user", session);
+  // console.log("session from user", session);
 
   // Use effect for redirection if user role is not authorized
   React.useEffect(() => {
@@ -41,7 +41,7 @@ const userPage = () => {
           </h1>
         </div>
         <div className="flex items-center gap-3 ">
-          <CreateUserForm />
+          {/* <CreateUserForm /> */}
           <CSVUpload />
           <Button
             onClick={() => {

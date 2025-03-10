@@ -65,6 +65,10 @@ export const columns: ColumnDef<any>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role" />
     ),
+    cell: ({ row }) => {
+      const role = row.original.role;
+      return role?.name || "-";
+    },
   },
   {
     accessorKey: "employeeId",

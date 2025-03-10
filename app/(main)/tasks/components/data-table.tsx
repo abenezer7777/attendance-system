@@ -27,26 +27,19 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useEffect } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageCount: number;
-  onFilterChange: (value: string) => void;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
+  // pageCount: number;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pageCount,
-  onFilterChange,
-  onPageChange,
-  onPageSizeChange,
-}: DataTableProps<TData, TValue>) {
+  // pageCount,
+}: // pageCount,
+DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -55,27 +48,11 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  // Debounce the filter value to prevent too many API calls
-  const debouncedFilter = useDebounce((value: string) => {
-    onFilterChange(value);
-  }, 500);
-
-  // Handle filter changes
-  useEffect(() => {
-    const fullNameFilter = columnFilters.find(
-      (filter) => filter.id === "fullName"
-    );
-    if (fullNameFilter) {
-      debouncedFilter(fullNameFilter.value as string);
-    } else {
-      debouncedFilter("");
-    }
-  }, [columnFilters]);
-
   const table = useReactTable({
     data,
     columns,
-    pageCount: pageCount,
+    // pageCount,
+    manualPagination: true,
     state: {
       sorting,
       columnVisibility,
@@ -83,18 +60,10 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
     enableRowSelection: true,
-    manualPagination: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: (updater) => {
-      if (typeof updater === "function") {
-        const newState = updater(table.getState().pagination);
-        onPageChange(newState.pageIndex + 1);
-        onPageSizeChange(newState.pageSize);
-      }
-    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -105,7 +74,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} data={data} />
+      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

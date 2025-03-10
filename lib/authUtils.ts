@@ -9,10 +9,10 @@ export const fetchCurrentUserWithAbilities = async (email: string | null) => {
     throw new Error("Unauthorized: No email in session");
   }
 
-  const currentUser = await prisma.user.findUnique({
+  const currentUser = await prisma.employee.findUnique({
     where: { email },
     include: {
-      role: {
+      roles: {
         include: {
           abilities: true,
         },
@@ -35,8 +35,10 @@ export const getUserSessionAndAbility = async () => {
   }
 
   const currentUser = await fetchCurrentUserWithAbilities(session.user.email);
+  // Flatten the abilities array
+  const abilities = currentUser.roles.flatMap((role) => role.abilities);
 
   // Build and return CASL abilities
-  const ability = createMongoAbility(currentUser.role.abilities);
+  const ability = createMongoAbility(abilities);
   return { currentUser, ability };
 };

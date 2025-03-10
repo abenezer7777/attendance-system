@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import type { Attendance } from "@prisma/client";
 
 // Schema for query parameters
 const querySchema = z.object({
@@ -17,6 +18,7 @@ const querySchema = z.object({
       "ADMIN",
     ])
     .optional(),
+
   buildingId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -33,6 +35,21 @@ const querySchema = z.object({
     ])
     .optional(),
 });
+type AttendanceWithRelations = Attendance & {
+  employee?: {
+    id: string;
+    fullName: string;
+    division: string;
+    department: string;
+    section: string;
+    locationCategory: string;
+    location: string;
+    // add any other fields you use
+  };
+  building: {
+    name: string;
+  };
+};
 
 export async function GET(request: Request) {
   try {
@@ -163,7 +180,9 @@ export async function GET(request: Request) {
     // Execute queries
     const [total, records] = await Promise.all([
       prisma.attendance.count({ where: baseQuery.where }),
-      prisma.attendance.findMany(baseQuery),
+      prisma.attendance.findMany(baseQuery) as Promise<
+        AttendanceWithRelations[]
+      >,
     ]);
 
     // Transform the data for the response

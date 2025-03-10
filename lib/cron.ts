@@ -23,7 +23,7 @@ export async function autoCheckoutJob(): Promise<CronJobResult> {
         where: { id: record.id },
         data: {
           checkOut: new Date(),
-          status: "AUTOCHECKOUT",
+          status: "AUTO_CHECKOUT",
         },
       })
     );

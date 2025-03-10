@@ -34,12 +34,12 @@ const mainItems = [
   },
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/dashboards",
     icon: LayoutDashboard,
   },
   {
     title: "Reports",
-    url: "/reports",
+    url: "/tasks",
     icon: List,
   },
   // {

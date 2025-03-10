@@ -1,4 +1,4 @@
-import { CircleIcon } from "@radix-ui/react-icons"
+import { CircleIcon } from "@radix-ui/react-icons";
 
 export const statuses = [
   {
@@ -31,14 +31,14 @@ export const statuses = [
     label: "Auto Checkout",
     icon: CircleIcon,
   },
-]
+];
 
 export const roles = [
-  { value: 'EMPLOYEE', label: 'Employee' },
-  { value: 'SUPERVISOR', label: 'Supervisor' },
-  { value: 'MANAGER', label: 'Manager' },
-  { value: 'OFFICER', label: 'Officer' },
-  { value: 'EXECUTIVE', label: 'Executive' },
-  { value: 'CHIEF_EXECUTIVE', label: 'Chief Executive' },
-  { value: 'ADMIN', label: 'Admin' },
-]
+  { value: "EMPLOYEE", label: "Employee" },
+  { value: "SUPERVISOR", label: "Supervisor" },
+  { value: "MANAGER", label: "Manager" },
+  { value: "OFFICER", label: "Officer" },
+  { value: "EXECUTIVE", label: "Executive" },
+  { value: "CHIEF_EXECUTIVE", label: "Chief Executive" },
+  { value: "ADMIN", label: "Admin" },
+];

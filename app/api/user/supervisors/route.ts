@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     const offset = (page - 1) * limit;
 
     const [users, total] = await Promise.all([
-      prisma.user.findMany({
+      prisma.employee.findMany({
         where: {
           fullName: {
             contains: search,
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
           fullName: "asc",
         },
       }),
-      prisma.user.count({
+      prisma.employee.count({
         where: {
           fullName: {
             contains: search,

@@ -52,11 +52,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, UserRoundMinus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Create a type for the update form without password
-type UpdateUserFormData = Omit<z.infer<typeof editUserSchema>, "password">;
+type UpdateUserFormData = z.infer<typeof editUserSchema>;
 
 type EditUserModalProps = {
   userData: any;
@@ -79,19 +79,24 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
   console.log("Initial userData:", userData);
 
   const form = useForm<UpdateUserFormData>({
-    resolver: zodResolver(editUserSchema.omit({ password: true })),
+    resolver: zodResolver(editUserSchema),
     defaultValues: {
-      employeeId: userData.employeeId,
+      id: userData.id,
       email: userData.email,
       fullName: userData.fullName,
       roleName: userData.role?.name,
-      organizationId: userData.organizationId,
+      division: userData.division,
+      department: userData.department,
+      section: userData.section,
+      phone: userData.phone || "",
       jobTitle: userData.jobTitle,
       jobRole: userData.jobRole,
-      mobile: userData.mobile || "",
-      supervisorId: userData.supervisorId || "",
-      assignedLocationIds:
-        userData.assignedLocations?.map((loc: any) => loc.id) || [],
+      immediateSupervisor: userData.immediateSupervisor,
+      location: userData.location,
+      locationCategory: userData.locationCategory,
+      category: userData.category,
+      // assignedLocationIds:
+      //   userData.assignedLocations?.map((loc: any) => loc.id) || [],
     },
   });
 
@@ -165,7 +170,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="employeeId"
+                name="id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Employee ID</FormLabel>
@@ -230,128 +235,6 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
                 )}
               />
 
-              {/* <FormField
-                control={form.control}
-                name="organizationId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Organization</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select organization" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {organizations?.map((org: any) => (
-                          <SelectItem key={org.id} value={org.id}>
-                            {org.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
-              <FormField
-                control={form.control}
-                name="supervisorId"
-                render={({ field }) => {
-                  const [open, setOpen] = useState(false);
-                  const [search, setSearch] = useState("");
-                  const [page, setPage] = useState(1);
-                  const { data: supervisorsData, isFetching } =
-                    useGetSupervisors(search, page);
-
-                  // Ensure users array exists with fallback
-                  const users = supervisorsData?.users || [];
-                  const hasMore = supervisorsData?.hasMore || false;
-
-                  return (
-                    <FormItem>
-                      <FormLabel>Supervisor</FormLabel>
-                      <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? users.find(
-                                    (user: any) => user.id === field.value
-                                  )?.fullName
-                                : "Select supervisor..."}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command shouldFilter={false}>
-                            <CommandInput
-                              placeholder="Search supervisors..."
-                              value={search}
-                              onValueChange={(value) => {
-                                setSearch(value);
-                                setPage(1);
-                              }}
-                              className="pointer-events-auto"
-                            />
-                            <CommandList>
-                              <CommandEmpty>No supervisor found.</CommandEmpty>
-                              <CommandGroup className="pointer-events-auto">
-                                <div className="max-h-[200px] overflow-y-auto">
-                                  {users.map((user: any) => (
-                                    <CommandItem
-                                      key={user.id}
-                                      value={user.id}
-                                      onSelect={() => {
-                                        field.onChange(
-                                          user.id === field.value ? "" : user.id
-                                        );
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          field.value === user.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {user.fullName}
-                                    </CommandItem>
-                                  ))}
-                                  {hasMore && (
-                                    <div className="py-2 px-2">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="w-full"
-                                        onClick={() => setPage(page + 1)}
-                                        disabled={isFetching}
-                                      >
-                                        {isFetching ? <Spinner /> : "Load more"}
-                                      </Button>
-                                    </div>
-                                  )}
-                                </div>
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-
               <FormField
                 control={form.control}
                 name="jobTitle"
@@ -382,10 +265,10 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
 
               <FormField
                 control={form.control}
-                name="mobile"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mobile</FormLabel>
+                    <FormLabel>Phone</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -394,7 +277,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="assignedLocationIds"
                 render={({ field }) => (
@@ -426,7 +309,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
 
             <div className="flex justify-end gap-4 pt-4">

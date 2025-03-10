@@ -33,19 +33,24 @@ export async function PATCH(
     const body = await req.json();
 
     // Validate the request body with the schema without password
-    const validatedData = createUserSchema.omit({ password: true }).parse(body);
+    const validatedData = createUserSchema.parse(body);
 
     const {
       email,
       fullName,
       roleName,
-      employeeId,
-      organizationId,
       jobTitle,
       jobRole,
-      mobile,
-      supervisorId,
-      assignedLocationIds = [],
+      phone,
+      location,
+      locationCategory,
+      division,
+      section,
+      department,
+      category,
+      immediateSupervisor,
+
+      // assignedLocationIds = [],
     } = validatedData;
 
     // Check if role exists
@@ -60,50 +65,27 @@ export async function PATCH(
       );
     }
 
-    // Check if organization exists
-    const existingOrg = await prisma.organization.findUnique({
-      where: { id: organizationId },
-    });
-
-    if (!existingOrg) {
-      return NextResponse.json(
-        { error: `Organization does not exist` },
-        { status: 400 }
-      );
-    }
-
     // Prepare update data
     const updateData = {
       email,
       fullName,
-      roleId: existingRole.id,
-      employeeId,
-      organizationId,
+      roleName,
       jobTitle,
       jobRole,
-      mobile,
-      supervisorId: supervisorId || null,
-      assignedLocations: {
-        set: assignedLocationIds.map((locationId: string) => ({
-          id: locationId,
-        })),
-      },
+      phone,
+      location,
+      locationCategory,
+      division,
+      section,
+      department,
+      category,
+      immediateSupervisor,
     };
 
     // Update the user
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.employee.update({
       where: { id },
       data: updateData,
-      include: {
-        role: true,
-        organization: true,
-        assignedLocations: true,
-        supervisor: {
-          select: {
-            fullName: true,
-          },
-        },
-      },
     });
 
     return NextResponse.json({
@@ -142,7 +124,7 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    await prisma.user.delete({
+    await prisma.employee.delete({
       where: { id },
     });
 

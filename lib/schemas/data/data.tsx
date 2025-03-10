@@ -1,99 +1,44 @@
-import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  CheckCircledIcon,
-  CircleIcon,
-  CrossCircledIcon,
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
-} from "@radix-ui/react-icons";
-
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
-];
-export const levels = [
-  {
-    value: "division",
-    label: "Division",
-  },
-  {
-    value: "department",
-    label: "Department",
-  },
-  {
-    value: "section",
-    label: "Section",
-  },
-];
-export const roleName = [
-  {
-    value: "ADMIN",
-    label: "ADMIN",
-  },
-  {
-    value: "EMPLOYEE",
-    label: "EMPLOYEE",
-  },
-  // {
-  //   value: "section",
-  //   label: "Section",
-  // },
-];
+import { CircleIcon } from "@radix-ui/react-icons";
 
 export const statuses = [
   {
-    value: "draft",
-    label: "Draft",
-    icon: QuestionMarkCircledIcon,
-  },
-  {
-    value: "sent",
-    label: "Sent",
+    value: "CHECKED_IN",
+    label: "Checked In",
     icon: CircleIcon,
   },
   {
-    value: "archive",
-    label: "Archive",
-    icon: StopwatchIcon,
+    value: "EARLY_LEAVE",
+    label: "Early Leave",
+    icon: CircleIcon,
   },
-  // {
-  //   value: "done",
-  //   label: "Done",
-  //   icon: CheckCircledIcon,
-  // },
-  // {
-  //   value: "canceled",
-  //   label: "Canceled",
-  //   icon: CrossCircledIcon,
-  // },
+  {
+    value: "PRESENT",
+    label: "Present",
+    icon: CircleIcon,
+  },
+  {
+    value: "LATE",
+    label: "Late",
+    icon: CircleIcon,
+  },
+  {
+    value: "ABSENT",
+    label: "Absent",
+    icon: CircleIcon,
+  },
+  {
+    value: "AUTO_CHECKOUT",
+    label: "Auto Checkout",
+    icon: CircleIcon,
+  },
 ];
 
-export const priorities = [
-  {
-    label: "Low",
-    value: "low",
-    icon: ArrowDownIcon,
-  },
-  {
-    label: "Medium",
-    value: "medium",
-    icon: ArrowRightIcon,
-  },
-  {
-    label: "High",
-    value: "high",
-    icon: ArrowUpIcon,
-  },
+export const roles = [
+  { value: "EMPLOYEE", label: "Employee" },
+  { value: "SUPERVISOR", label: "Supervisor" },
+  { value: "MANAGER", label: "Manager" },
+  { value: "OFFICER", label: "Officer" },
+  { value: "EXECUTIVE", label: "Executive" },
+  { value: "CHIEF_EXECUTIVE", label: "Chief Executive" },
+  { value: "ADMIN", label: "Admin" },
 ];

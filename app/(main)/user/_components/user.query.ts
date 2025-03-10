@@ -60,3 +60,13 @@ export function useGetSupervisors(
     },
   });
 }
+
+export const useGetLocations = () => {
+  return useQuery({
+    queryKey: ["locations"],
+    queryFn: async () => {
+      const response = await axios.get("/api/building");
+      return response.data;
+    },
+  });
+};

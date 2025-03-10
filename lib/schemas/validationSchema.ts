@@ -1,5 +1,13 @@
 import * as z from "zod";
 export const orgLevel = z.enum(["DIVISION", "DEPARTMENT", "SECTION"]);
+export const status = z.enum([
+  "CHECKED_IN",
+  "EARLY_LEAVE",
+  "PRESENT",
+  "LATE",
+  "ABSENT",
+  "AUTO_CHECKOUT",
+]);
 export const LocationCategory = z.enum([
   "CAAZ",
   "CER",
@@ -45,37 +53,26 @@ export const createOrganizationSchema = z.object({
 //   password: z.string().min(1, "Password is required"),
 // });
 export const createUserSchema = z.object({
-  // id: z.string().optional(),
-  id: z
-    .string()
-    .min(1, "Employee number is required")
-    .regex(/^\d+$/, "Employee number must be a valid number"),
+  id: z.string().min(1, "Employee ID is required"),
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   fullName: z.string().min(1, "Name is required"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
+  // password: z.string().min(6, "Password must be at least 6 characters long"),
   roleName: z.string().min(1, "Role is required"),
-  jobTitle: z.string().min(1, "Job Title is required"),
-  jobRole: z.string().min(1, "Job Role is required"),
-  supervisorId: z.string().optional(),
-  mobile: z
+  immediateSupervisor: z.string(),
+  // supervisorId: z.string().optional(),
+  phone: z
     .string()
     .regex(/^\d{9,}$/, "Invalid mobile number")
-    .or(z.literal("")),
-  organizationId: z.string(),
-  assignedLocationIds: z
-    .array(z.string())
-    .min(1, "At least one location is required"),
+    .optional(),
+  division: z.string().optional(),
+  department: z.string().optional(),
+  section: z.string().optional(),
+  jobTitle: z.string().min(1, "Job Title is required"),
+  jobRole: z.string().min(1, "Job Role is required"),
+  location: z.string().min(1, "location is required"),
+  locationCategory: z.string().min(1, "locationCategory is required"),
+  category: z.string().min(1, "Category  is required"),
 });
-
-// export const editUserSchema = z.object({
-//   id: z.string(),
-//   employeeId: z.string(),
-//   email: z.string(),
-//   fullName: z.string(),
-//   username: z.string(),
-//   password: z.string().optional(),
-//   roleName: z.string().optional(),
-// });
 
 export const locationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -100,17 +97,42 @@ export const locationSchema = z.object({
   ),
 });
 export const editUserSchema = z.object({
-  employeeId: z.string().min(1, "Employee ID is required"),
-  email: z.string().email("Invalid email address"),
-  fullName: z.string().min(1, "Full name is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  id: z.string().min(1, "Employee ID is required"),
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  fullName: z.string().min(1, "Name is required"),
+  // password: z.string().min(6, "Password must be at least 6 characters long"),
   roleName: z.string().min(1, "Role is required"),
-  organizationId: z.string().min(1, "Organization is required"),
-  jobTitle: z.string().min(1, "Job title is required"),
-  jobRole: z.string().min(1, "Job role is required"),
-  mobile: z.string().optional(),
-  supervisorId: z.string().optional().nullable(),
-  assignedLocationIds: z.array(z.string()).optional().default([]),
+  immediateSupervisor: z.string(),
+  // supervisorId: z.string().optional(),
+  phone: z
+    .string()
+    .regex(/^\d{9,}$/, "Invalid mobile number")
+    .optional(),
+  division: z.string().optional(),
+  department: z.string().optional(),
+  section: z.string().optional(),
+  jobTitle: z.string().min(1, "Job Title is required"),
+  jobRole: z.string().min(1, "Job Role is required"),
+  location: z.string().min(1, "location is required"),
+  locationCategory: z.string().min(1, "locationCategory is required"),
+  category: z.string().min(1, "Category  is required"),
+  // assignedLocationIds: z.array(z.string()).optional().default([]),
 });
 
-export const updateUserSchema = editUserSchema.omit({ password: true });
+// export const updateUserSchema = editUserSchema
+
+export const reportSchema = z.object({
+  id: z.string(),
+  employeeId: z.string(),
+  fullName: z.string(),
+  checkIn: z.string(),
+  checkOut: z.string().optional(),
+  location: z.string(),
+  locationCategory: z.string(),
+  building: z.string(),
+  division: z.string().optional(),
+  department: z.string().optional(),
+  section: z.string().optional(),
+  status: z.string(),
+});
+export type Report = z.infer<typeof reportSchema>;
